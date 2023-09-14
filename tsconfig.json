@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "allowSyntheticDefaultImports": false,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "listFiles": false,
+    "removeComments": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+
+    "incremental": true,
+    "strict": false,
+    "declaration": true
+  },
+  "compileOnSave": true,
+  "include": ["src/**.ts"],
+  "exclude": ["node_modules", "resources"]
+}

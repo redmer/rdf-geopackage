@@ -1,0 +1,69 @@
+{
+  "name": "rdf-geopackage",
+  "version": "1.0.0",
+  "description": "Generate RDF out of a GeoPackage (for further processing)",
+  "repository": "https://github.com/redmer/rdf-geopackage.git",
+  "main": "dist/rdf-geopackage.js",
+  "bin": {
+    "rdf-geopackage": "dist/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ./tsconfig.json",
+    "prepare": "npm run build",
+    "postversion": "git push && git push --tags"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "types": "dist/msaccess.d.ts",
+  "type": "module",
+  "keywords": [],
+  "author": "Redmer Kronemeijer <12477216+redmer@users.noreply.github.com> (https://rdmr.eu/)",
+  "license": "MPL-2.0",
+  "prettier": {},
+  "eslintConfig": {
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "eslint:recommend",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "overrides": [],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {}
+  },
+  "devDependencies": {
+    "@rdfjs/types": "^1.1.0",
+    "@types/json-stable-stringify": "^1.0.34",
+    "@types/n3": "^1.16.0",
+    "@types/node": "^20.6.0",
+    "@types/streamify-array": "^1.0.0",
+    "@types/yargs": "^17.0.24",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "eslint": "^8.49.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "yargs": "^17.7.2"
+  },
+  "dependencies": {
+    "@ngageoint/geopackage": "^4.2.4",
+    "@ngageoint/simple-features-geojson-js": "^1.1.1",
+    "@ngageoint/simple-features-js": "^1.1.1",
+    "@ngageoint/simple-features-wkt-js": "^1.1.1",
+    "json-stable-stringify": "^1.0.2",
+    "n3": "^1.17.1",
+    "rdf-data-factory": "^1.1.2",
+    "rdf-stores": "^1.0.0",
+    "streamify-array": "^1.0.1"
+  }
+}
