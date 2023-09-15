@@ -27,8 +27,8 @@ jobs:
         with:
           generate_release_notes: true
 
-      - run: yarn
+      - run: npm ci
 
-      - run: yarn publish --access public
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
