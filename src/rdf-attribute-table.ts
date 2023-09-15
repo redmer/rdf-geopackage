@@ -17,7 +17,7 @@ export function* quadsFromAttributeTable(
 
   for (const [i, row] of enumerate(iterator)) {
     const subject = getRowNode(
-      String(row[options.tableIDColumns[0]] ?? `${options.tableName}_${i}`),
+      `${options.tableName}_${row[options.tableIDColumns[0]] ?? i}`,
       options.baseIRI,
     );
 

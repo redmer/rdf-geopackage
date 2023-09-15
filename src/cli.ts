@@ -87,14 +87,13 @@ async function cli() {
   const writer = new StreamWriter({
     format: mimetype,
     prefixes: {
-      xyz: XYZ(""),
-      rdf: RDFNS(""),
       fx: FX(""),
       geo: GEO(""),
+      rdf: RDFNS(""),
       xsd: XSD(""),
+      xyz: XYZ(""),
     },
   });
-  console.log(mimetype);
 
   // `Error parsing geometry`: the GeoPackage may output errors to console.log.
   console.log = function () {};

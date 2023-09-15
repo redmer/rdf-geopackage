@@ -38,21 +38,15 @@ export function getTableNode(tableName: string, base?: string): RDF.NamedNode {
   return DF.namedNode(tableURL.href);
 }
 
-/** Generate the RDF NamedNode for the row / feature */
-export function getRowNode(rowIdValue: string, base?: string): RDF.NamedNode {
-  try {
-    return DF.namedNode(new URL(rowIdValue).href);
-  } catch (error) {
-    const baseURL = base ?? XYZ("").value;
-    const rowURL = new URL(encodeURIComponent(rowIdValue), baseURL);
-    return DF.namedNode(rowURL.href);
-  }
+/** Generate the RDF Node for the row / feature */
+export function getRowNode(rowIdValue: string, base?: string) {
+  return DF.blankNode();
 }
 
 /** Generate Facade-X quads that represent the table its rows */
 export function* quadsForTableAndRow(
   tableAndGraph: RDF.NamedNode,
-  row: RDF.NamedNode,
+  row: RDF.NamedNode | RDF.BlankNode,
   i: number,
 ) {
   yield DF.quad(tableAndGraph, RDFNS("type"), FX("root"), tableAndGraph);

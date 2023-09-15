@@ -25,6 +25,11 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
   gpkg: GeoPackage;
   shouldRead: boolean;
 
+  /**
+   * Read a GeoPackage and output a stream of RDF.Quads
+   * @param filepath Path to GeoPackage file
+   * @param options Options
+   */
   constructor(filepath: string, options: GeoPackageOptions) {
     super({ objectMode: true });
 
@@ -44,13 +49,16 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
   }
 
   _read(size: number): void {
+    // _read() manages backpressure: start pushing quads when _read() is called
+    // but stop as soon as this.push() returns falsy. Then stop iteration and
+    // simply wait until _read() is called again.
     this.shouldRead = true;
 
     let shouldContinue: boolean;
     while (this.shouldRead) {
       const iter = this.iterQuad.next();
       if (iter.value) shouldContinue = this.push(iter.value);
-      if (iter.done) this.push(null); // EOF chunk is null
+      if (iter.done) this.push(null); // EOF = push null chunk
       this.shouldRead = shouldContinue;
     }
   }

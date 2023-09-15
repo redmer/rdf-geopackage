@@ -16,9 +16,7 @@ import { quadsFromFeatureTable } from "./rdf-feature-table.js";
 export function* quadsFromGeoPackage(
   geopackage: GeoPackage,
   options: GeoPackageOptions,
-  // { boundingBox, baseIRI, allowedLayers }= {allowedLayers, baseIRI, boundingBox}: GeoPackageOptions,
 ): Generator<RDF.Quad> {
-  // const geopackage = await GeoPackageAPI.open(filepath);
   const { boundingBox, baseIRI, allowedLayers } = options;
 
   for (const tableName of geopackage.getAttributesTables()) {
@@ -46,6 +44,4 @@ export function* quadsFromGeoPackage(
       baseIRI,
     });
   }
-
-  geopackage.close();
 }

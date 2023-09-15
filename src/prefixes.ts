@@ -3,6 +3,7 @@ import { DataFactory } from "rdf-data-factory";
 
 const MyDataFactory = new DataFactory();
 
+/** A namespace prefix helper function */
 export function prefix(
   namespace: string,
 ): (localname: string) => RDF.NamedNode {
