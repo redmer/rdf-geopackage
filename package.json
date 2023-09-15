@@ -4,7 +4,6 @@
   "description": "Generate RDF out of a GeoPackage (for further processing)",
   "repository": "https://github.com/redmer/rdf-geopackage.git",
   "main": "dist/rdf-geopackage.js",
-  "private": false,
   "bin": {
     "rdf-geopackage": "dist/cli.js"
   },
