@@ -6,7 +6,13 @@ import stringify from "json-stable-stringify";
 import { DataFactory } from "rdf-data-factory";
 import { GEO, RDFNS } from "./prefixes.js";
 import { enumerate } from "./py-enumerate.js";
-import { getTableNode, getRowNode, quadsForTableAndRow, quadsForAttributes } from "./rdf-table-common.js";
+import {
+  QuadsFromTableOptions,
+  getRowNode,
+  getTableNode,
+  quadsForAttributes,
+  quadsForTableAndRow,
+} from "./rdf-table-common.js";
 
 const DF = new DataFactory();
 
@@ -46,19 +52,18 @@ export function* quadsForGeometry(
 /** Generate RDF quads from a GeoPackage feature table */
 export function* quadsFromFeatureTable(
   iterator: IterableIterator<Feature>,
-  tableName: string,
-  subjectBase?: string,
+  options: QuadsFromTableOptions,
 ) {
-  const graph = getTableNode(tableName);
+  const graph = getTableNode(options.tableName);
 
   for (const [i, feature] of enumerate(iterator)) {
     const subject = getRowNode(
-      String(feature.id ?? `${tableName}_${i}`),
-      subjectBase,
+      String(feature.id ?? `${options.tableName}_${i}`),
+      options.baseIRI,
     );
-    yield* quadsForTableAndRow(graph, subject, i);
 
-    yield* quadsForAttributes(feature.properties, subject, graph);
+    yield* quadsForTableAndRow(graph, subject, i);
+    yield* quadsForAttributes(feature.properties, subject, graph, options);
     yield* quadsForGeometry(feature.geometry, subject, graph);
   }
 }
