@@ -1,6 +1,6 @@
 {
   "name": "@rdmr-eu/rdf-geopackage",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Generate RDF out of a GeoPackage (for further processing)",
   "repository": "https://github.com/redmer/rdf-geopackage.git",
   "main": "dist/rdf-geopackage.js",
