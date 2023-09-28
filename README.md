@@ -4,7 +4,7 @@ Generate RDF out of a GeoPackage (for further processing)
 
 ## Usage
 
-Install using NPM locally `npm -g @rdmr-eu/rdf-geopackage` as a command line tool.
+Install using NPM locally `npm install --global @rdmr-eu/rdf-geopackage` as a command line tool.
 
 Check if it's installed correctly with `rdf-geopackage --help`.
 That should return the following help info.
