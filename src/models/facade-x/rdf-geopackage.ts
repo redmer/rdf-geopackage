@@ -1,6 +1,6 @@
 import { GeoPackage } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import { GeoPackageOptions } from "./geopackage.js";
+import { GeoPackageOptions } from "../../geopackage.js";
 import { quadsFromAttributeTable } from "./rdf-attribute-table.js";
 import { quadsFromFeatureTable } from "./rdf-feature-table.js";
 

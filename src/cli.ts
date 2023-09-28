@@ -17,6 +17,7 @@ import {
 import { Bye } from "./cli-error.js";
 import { GeoPackageParser } from "./geopackage.js";
 import { EXTENSION_MIMETYPES, mimetypeForExtension } from "./mimetypes.js";
+import { ModelRegistry } from "./models/models.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
 
 const pipeline = promisify(streampipeline);
@@ -53,7 +54,7 @@ async function cli() {
     .option("model", {
       desc: "Data meta model",
     })
-    .choices("model", ["facade-x"])
+    .choices("model", ModelRegistry.knownModels())
     .parse();
 
   if (!existsSync(argv.input)) Bye(`File '${argv.input}' not found`);
@@ -77,9 +78,11 @@ async function cli() {
     : mimetypeForExtension(path.extname(argv.output)) ??
       mimetypeForExtension("nq");
   const wantsGzip: boolean = argv.output?.endsWith(".gz");
+  const model: string = argv.model ?? ModelRegistry.knownModels()[0];
 
   const parser = new GeoPackageParser(argv.input, {
-    boundingBox: boundingBox,
+    model,
+    boundingBox,
     allowedLayers: argv.onlyLayers,
     baseIRI: argv.baseIri ?? pathToFileURL(argv.input).href,
     includeBinaryValues: argv.includeBinaryValues,

@@ -2,7 +2,14 @@ import { BoundingBox, GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
-import { quadsFromGeoPackage } from "./rdf-geopackage.js";
+import { quadsFromGeoPackage } from "./models/facade-x/rdf-geopackage.js";
+import { ModelRegistry, QuadsGeneratorFunc } from "./models/models.js";
+
+// Register known quad generating modules here.
+// I don't know how to make this a true plugin (but that's not really necessary either)
+const WellKnownModels = { "facade-x": quadsFromGeoPackage };
+for (const [modelName, func] of Object.entries(WellKnownModels))
+  ModelRegistry.add(modelName, func);
 
 export interface GeoPackageOptions {
   /** Pass a data factory or rdf-data-factory is used */
@@ -16,6 +23,8 @@ export interface GeoPackageOptions {
   boundingBox?: BoundingBox;
   /** Generate quads where the object/value is a binary (Base-64 encoded). */
   includeBinaryValues?: boolean;
+  /** Data meta model by which triples are generated */
+  model: string;
 }
 
 export class GeoPackageParser extends Readable implements RDF.Stream {
@@ -24,6 +33,7 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
   iterQuad: Generator<RDF.Quad>;
   gpkg: GeoPackage;
   shouldRead: boolean;
+  generator: QuadsGeneratorFunc;
 
   /**
    * Read a GeoPackage and output a stream of RDF.Quads
@@ -35,6 +45,7 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
 
     this.filepath = filepath;
     this.options = { dataFactory: new DataFactory(), ...options };
+    this.generator = ModelRegistry.get(this.options.model);
     this.shouldRead = false;
   }
 
@@ -42,7 +53,7 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
     GeoPackageAPI.open(this.filepath)
       .then((gpkg) => {
         this.gpkg = gpkg;
-        this.iterQuad = quadsFromGeoPackage(this.gpkg, this.options);
+        this.iterQuad = this.generator(this.gpkg, this.options);
         callback();
       })
       .catch(callback);

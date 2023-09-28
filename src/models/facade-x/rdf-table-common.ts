@@ -2,7 +2,7 @@ import type { DBValue } from "@ngageoint/geopackage/dist/lib/db/dbAdapter.js";
 import type * as RDF from "@rdfjs/types";
 import { DataFactory } from "rdf-data-factory";
 import { toRdf } from "rdf-literal";
-import { FX, RDFNS, XSD, XYZ } from "./prefixes.js";
+import { FX, RDFNS, XSD, XYZ } from "../../prefixes.js";
 
 export interface QuadsFromTableOptions {
   /** Name of the originating table */

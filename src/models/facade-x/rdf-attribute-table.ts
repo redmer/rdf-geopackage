@@ -1,5 +1,5 @@
 import type { DBValue } from "@ngageoint/geopackage/dist/lib/db/dbAdapter.js";
-import { enumerate } from "./py-enumerate.js";
+import { enumerate } from "../../py-enumerate.js";
 import {
   QuadsFromTableOptions,
   getRowNode,

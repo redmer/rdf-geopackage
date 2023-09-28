@@ -4,8 +4,8 @@ import type * as RDF from "@rdfjs/types";
 import type { Feature, Geometry } from "geojson";
 import stringify from "json-stable-stringify";
 import { DataFactory } from "rdf-data-factory";
-import { GEO, RDFNS } from "./prefixes.js";
-import { enumerate } from "./py-enumerate.js";
+import { GEO, RDFNS } from "../../prefixes.js";
+import { enumerate } from "../../py-enumerate.js";
 import {
   QuadsFromTableOptions,
   getRowNode,
