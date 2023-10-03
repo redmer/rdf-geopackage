@@ -75,7 +75,7 @@ async function cli() {
     : process.stdout;
   const mimetype: string = argv.format
     ? mimetypeForExtension(argv.format) ?? argv.format
-    : mimetypeForExtension(path.extname(argv.output)) ??
+    : mimetypeForExtension(path.extname(argv.output ?? ".nq")) ??
       mimetypeForExtension("nq");
   const wantsGzip: boolean = argv.output?.endsWith(".gz");
   const model: string = argv.model ?? ModelRegistry.knownModels()[0];
@@ -114,3 +114,4 @@ async function cli() {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) void cli();
+else if (require.main === module) void cli();
