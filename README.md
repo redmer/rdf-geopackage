@@ -31,19 +31,27 @@ Options:
 
 ## Options
 
-Limit **large GeoPackages** with `--bounding-box`. Supply a space separated list of coordinates to limit the Features returned. Provide the bounding box as WGS84 (GeoJSON default) or supply a CRS code (accesses EPSG.io) or Projection WKT with `--bounding-box-crs`.
+Limit **large GeoPackages** with `--bounding-box`.
+Supply a space separated list of coordinates to limit the Features returned.
+Provide the bounding box as WGS84 (GeoJSON default) or supply a CRS code (accesses EPSG.io) or Projection WKT with `--bounding-box-crs`.
 
-You can also limit which feature layers (or attribute tables) are output with `--only-layers`. NULL values are never output and binary values are skipped, unless `--include-binary-values` is provided.
+You can also limit which feature layers (or attribute tables) are output with `--only-layers`.
+NULL values are never output and binary values are skipped, unless `--include-binary-values` is provided.
+Binary values are Base64-encoded string values with a `xsd:base64Binary` datatype.
 
-By default, **output** is directed to stdout as N-Quads. Provide `--output` to redirect the quads to specified file. The serialization format is recognized from the file extension but can be overriden with `--format`. Add `.gz` after the extension (e.g. `mydata.ttls.gz`) to GZip the output.
+By default, **output** is directed to stdout as N-Quads. Provide `--output` to redirect the quads to specified file.
+The serialization format is recognized from the file extension but can be overriden with `--format`.
+Add `.gz` after the extension (e.g. `mydata.ttls.gz`) to GZip the output.
 
-The generated quads follow a model, supplied by `--model` and by default `facade-x` with GeoSPARQL. Override the base IRI with `--base-iri` to let subject-URLs not be derived from the present working directory.
+The generated quads follow a model, supplied by `--model` and by default `facade-x` with GeoSPARQL.
+Override the base IRI with `--base-iri` to let subject-URLs not be derived from the present working directory.
 
 ## Model: Facade-X
 
-`rdf-geopackage` uses a default model that, like the SPARQL-Anything Facade-X meta-model, can represent almost all non-geographical information. It uses RDF containers and blank nodes to represent most data.
+`rdf-geopackage` uses a default model that, like the SPARQL-Anything Facade-X meta-model, can represent almost all non-geographical information.
+It uses RDF containers and blank nodes to represent most data.
 
-Column metadata is very limited and most values are not types (properly).
+Column metadata is very limited and most values are not typed (properly).
 Example data [from NGA][example.gpkg].
 
 ```trig
@@ -70,7 +78,8 @@ xyz:attribute_table_name a fx:root ;
 }
 ```
 
-[GeoSPARQL][geosparql] is used to represent `geo:Feature`s with a `geo:hasDefaultGeometry` that refers to a `geo:Geometry`. That Geometry in turn has a `geo:asGeoJSON` and `geo:asWKT` representations of their geometry in WGS84 (GeoJSON-default).
+[GeoSPARQL][geosparql] is used to represent `geo:Feature`s with a `geo:hasDefaultGeometry` that refers to a `geo:Geometry`.
+That Geometry in turn has a `geo:asGeoJSON` and `geo:asWKT` representations of their geometry in WGS84 (GeoJSON-default).
 
 [geosparql]: https://www.ogc.org/standard/geosparql/
 [example.gpkg]: https://github.com/ngageoint/GeoPackage/blob/master/docs/examples/java/example.gpkg

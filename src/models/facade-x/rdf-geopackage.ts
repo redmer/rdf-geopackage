@@ -31,6 +31,7 @@ export function* quadsFromGeoPackage(
       tableIDColumns: dao.idColumns,
       tableName,
       baseIRI,
+      includeBinaryValues: options.includeBinaryValues,
     });
   }
 
@@ -42,6 +43,7 @@ export function* quadsFromGeoPackage(
     yield* quadsFromFeatureTable(it, {
       tableName,
       baseIRI,
+      includeBinaryValues: options.includeBinaryValues,
     });
   }
 }
