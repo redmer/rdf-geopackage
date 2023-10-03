@@ -113,5 +113,4 @@ async function cli() {
   }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) void cli();
-else if (require.main === module) void cli();
+void cli();
