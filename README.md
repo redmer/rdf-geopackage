@@ -10,7 +10,7 @@ Check if it's installed correctly with `rdf-geopackage --help`.
 That should return the following help info.
 
 ```man
-Generate RDF from an OGC GeoPackage with cli.js
+Generate RDF from an OGC GeoPackage with rdf-geopackage
 
 Options:
       --help                   Show help                               [boolean]
@@ -41,7 +41,7 @@ The generated quads follow a model, supplied by `--model` and by default `facade
 
 ## Model: Facade-X
 
-`rdf-geopackage` uses a model that, like the SPARQL-Anything Facade-X meta-model, can represent almost all non-geographical information. It uses RDF containers and blank nodes to represent most data.
+`rdf-geopackage` uses a default model that, like the SPARQL-Anything Facade-X meta-model, can represent almost all non-geographical information. It uses RDF containers and blank nodes to represent most data.
 
 Column metadata is very limited and most values are not types (properly).
 Example data [from NGA][example.gpkg].
