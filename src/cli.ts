@@ -85,7 +85,7 @@ async function cli() {
     boundingBox,
     allowedLayers: argv.onlyLayers,
     baseIRI: argv.baseIri ?? pathToFileURL(argv.input).href,
-    includeBinaryValues: argv.includeBinaryValues,
+    includeBinaryValues: Boolean(argv.includeBinaryValues),
   });
   const writer = new StreamWriter({
     format: mimetype,
