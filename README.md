@@ -23,8 +23,7 @@ Options:
                                bles                                      [array]
       --base-iri               Base IRI                                 [string]
       --format                 Override output format (default: nquads)
-  [choices: "json", "jsonld", "n3", "nq", "nquads", "nt", "ntriples", "owl", "rd
-                         f", "rdfxml", "trig", "trigs", "ttl", "ttls", "turtle"]
+            [choices: "nq", "nquads", "trig", "nt", "ntriples", "ttl", "turtle"]
       --include-binary-values  Output binary values                    [boolean]
       --model                  Data meta model             [choices: "facade-x"]
 ```
