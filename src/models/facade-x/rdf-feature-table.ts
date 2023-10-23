@@ -56,7 +56,7 @@ export function* quadsFromFeatureTable(
 ) {
   const graph = getTableNode(options.tableName);
 
-  for (const [i, feature] of enumerate(iterator)) {
+  for (const [i, feature] of enumerate(iterator, 1)) {
     const subject = getRowNode(
       `${options.tableName}_${feature.id ?? i}`,
       options.baseIRI,
