@@ -4,6 +4,7 @@ import { StreamWriter } from "n3";
 import { createWriteStream, existsSync } from "node:fs";
 import * as path from "node:path";
 import { PassThrough, pipeline as streampipeline } from "node:stream";
+import { buffer } from "node:stream/consumers";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { createGzip } from "node:zlib";
@@ -23,10 +24,14 @@ import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
 const pipeline = promisify(streampipeline);
 
 async function cli() {
-  const argv = await yargs(hideBin(process.argv))
+  const options = yargs(hideBin(process.argv))
     .usage(`Generate RDF from an OGC GeoPackage with $0`)
-    .option("input", { alias: "i", type: "string", desc: "GeoPackage file" })
-    .demandOption("input")
+    .option("input", {
+      alias: "i",
+      type: "string",
+      desc: "GeoPackage file",
+      nargs: 1,
+    })
     .option("output", { alias: "o", type: "string", desc: "Output quads file" })
     .normalize(["input", "output"])
     .option("bounding-box", {
@@ -55,9 +60,22 @@ async function cli() {
       desc: "Data meta model",
     })
     .choices("model", ModelRegistry.knownModels())
-    .parse();
+    .strict();
+  const argv = await options.parse();
 
-  if (!existsSync(argv.input)) Bye(`File '${argv.input}' not found`);
+  // Check the input: either an existing filepath or none and then stdin is not a TTY
+  if (argv.input && argv.input != "-" && !existsSync(argv.input))
+    Bye(`File '${argv.input}' not found`);
+  if ((!argv.input || argv.input == "-") && process.stdin.isTTY)
+    Bye(
+      `Missing required input GeoPackage file: provide a file path or pipe in via stdin.\n\nUsage:`,
+      await options.getHelp(),
+    );
+
+  // Get the input filepath or buffer and determine the best baseIRI
+  const input = argv.input != "-" ? argv.input : await buffer(process.stdin);
+  const baseIRI =
+    argv.baseIri ?? pathToFileURL(argv.input ?? process.env.PWD + "/").href;
 
   // If there's a bounding box CRS defined, first check if we can parse it.
   // This is less expensive than converting quads etc.
@@ -80,11 +98,11 @@ async function cli() {
   const wantsGzip: boolean = argv.output?.endsWith(".gz");
   const model: string = argv.model ?? ModelRegistry.knownModels()[0];
 
-  const parser = new GeoPackageParser(argv.input, {
+  const parser = new GeoPackageParser(input, {
     model,
     boundingBox,
     allowedLayers: argv.onlyLayers,
-    baseIRI: argv.baseIri ?? pathToFileURL(argv.input).href,
+    baseIRI,
     includeBinaryValues: Boolean(argv.includeBinaryValues),
   });
   const writer = new StreamWriter({

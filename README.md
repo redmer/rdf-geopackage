@@ -15,7 +15,7 @@ Generate RDF from an OGC GeoPackage with rdf-geopackage
 Options:
       --help                   Show help                               [boolean]
       --version                Show version number                     [boolean]
-  -i, --input                  GeoPackage file               [string] [required]
+  -i, --input                  GeoPackage file                          [string]
   -o, --output                 Output quads file                        [string]
       --bounding-box           Limit features to bounding box           [string]
       --bounding-box-crs       Coordinate Reference System code         [string]
@@ -38,9 +38,12 @@ You can also limit which feature layers (or attribute tables) are output with `-
 NULL values are never output and binary values are skipped, unless `--include-binary-values` is provided.
 Binary values are Base64-encoded string values with a `xsd:base64Binary` datatype.
 
-By default, **output** is directed to stdout as N-Quads. Provide `--output` to redirect the quads to specified file.
-The serialization format is recognized from the file extension but can be overriden with `--format`.
-Add `.gz` after the extension (e.g. `mydata.ttls.gz`) to GZip the output.
+By default, **output** is directed to stdout as N-Quads. Provide `--output` to save the triples or quads to a file.
+The **serialization format** is recognized from the file extension but can be overriden with `--format`.
+Add `.gz` after the extension (e.g. `mydata.ttls.gz`) to **GZip** the output.
+
+Provide the path to the **input file** with `--input`.
+You may also pipe in a file to rdf-geopackage.
 
 The generated quads follow a model, supplied by `--model` and by default `facade-x` with GeoSPARQL.
 Override the base IRI with `--base-iri` to let subject-URLs not be derived from the present working directory.

@@ -29,7 +29,7 @@ export interface GeoPackageOptions {
 
 export class GeoPackageParser extends Readable implements RDF.Stream {
   options: GeoPackageOptions;
-  filepath: string;
+  filepathOrBuffer: string | Buffer | Uint8Array;
   iterQuad: Generator<RDF.Quad>;
   gpkg: GeoPackage;
   shouldRead: boolean;
@@ -37,20 +37,23 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
 
   /**
    * Read a GeoPackage and output a stream of RDF.Quads
-   * @param filepath Path to GeoPackage file
+   * @param filepathOrBuffer Path to GeoPackage file
    * @param options Options
    */
-  constructor(filepath: string, options: GeoPackageOptions) {
+  constructor(
+    filepathOrBuffer: string | Buffer | Uint8Array,
+    options: GeoPackageOptions,
+  ) {
     super({ objectMode: true });
 
-    this.filepath = filepath;
+    this.filepathOrBuffer = filepathOrBuffer;
     this.options = { dataFactory: new DataFactory(), ...options };
     this.generator = ModelRegistry.get(this.options.model);
     this.shouldRead = false;
   }
 
   _construct(callback: (error?: Error) => void): void {
-    GeoPackageAPI.open(this.filepath)
+    GeoPackageAPI.open(this.filepathOrBuffer)
       .then((gpkg) => {
         this.gpkg = gpkg;
         this.iterQuad = this.generator(this.gpkg, this.options);
