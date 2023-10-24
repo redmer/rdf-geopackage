@@ -1,5 +1,8 @@
 # rdf-geopackage
 
+[![Get latest version](https://img.shields.io/npm/v/%40rdmr-eu/rdf-geopackage)](https://www.npmjs.com/package/@rdmr-eu/rdf-geopackage)
+
+
 Generate RDF out of a GeoPackage (for further processing)
 
 ## Usage
