@@ -15,10 +15,17 @@ export const EXTENSION_MIMETYPES = {
   ttl: "text/turtle",
   // ttls: "text/x-turtlestar",
   turtle: "text/turtle",
-};
+} as const;
+
+export type MimetypeExtensions = keyof typeof EXTENSION_MIMETYPES;
+export type MimetypeValues = (typeof EXTENSION_MIMETYPES)[MimetypeExtensions];
 
 /** Get mimetype for extension. Skip a .gz suffix. */
 export function mimetypeForExtension(path: string) {
   const ext = path.replace(".gz", "").split(".").at(-1);
   return EXTENSION_MIMETYPES[ext];
+}
+
+export function supportsGraphs(mimetype: MimetypeValues): boolean {
+  return mimetype == "application/n-quads" || mimetype == "application/trig";
 }

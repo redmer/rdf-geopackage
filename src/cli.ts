@@ -8,6 +8,7 @@ import { buffer } from "node:stream/consumers";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 import { createGzip } from "node:zlib";
+import { DataFactory } from "rdf-data-factory";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import {
@@ -17,9 +18,15 @@ import {
 } from "./bounding-box.js";
 import { Bye } from "./cli-error.js";
 import { GeoPackageParser } from "./geopackage.js";
-import { EXTENSION_MIMETYPES, mimetypeForExtension } from "./mimetypes.js";
+import {
+  EXTENSION_MIMETYPES,
+  MimetypeValues,
+  mimetypeForExtension,
+  supportsGraphs,
+} from "./mimetypes.js";
 import { ModelRegistry } from "./models/models.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
+import { MergeGraphsStream } from "./rdf-stream-override.js";
 
 const pipeline = promisify(streampipeline);
 
@@ -91,10 +98,13 @@ async function cli() {
   const target = argv.output
     ? createWriteStream(argv.output, { encoding: "utf-8" })
     : process.stdout;
-  const mimetype: string = argv.format
+  const mimetype: MimetypeValues = argv.format // Try explicit --format
     ? mimetypeForExtension(argv.format) ?? argv.format
-    : mimetypeForExtension(path.extname(argv.output ?? ".nq")) ??
-      mimetypeForExtension("nq");
+    : argv.output // If no --format, fallback to output path extension
+    ? mimetypeForExtension(path.extname(argv.output))
+    : mimetypeForExtension("nq"); // If no valid extension, fallback to nquads.
+
+  const inTriples = !supportsGraphs(mimetype);
   const wantsGzip: boolean = argv.output?.endsWith(".gz");
   const model: string = argv.model ?? ModelRegistry.knownModels()[0];
 
@@ -119,12 +129,16 @@ async function cli() {
   // `Error parsing geometry`: the GeoPackage may output errors to console.log.
   // This line disables console.log by hackily overriding it.
   console.log = function () {};
+  const DF = new DataFactory();
 
   try {
     pipeline(
       parser,
+      inTriples
+        ? new MergeGraphsStream({ intoGraph: DF.defaultGraph() })
+        : new PassThrough({ objectMode: true }),
       writer,
-      wantsGzip ? createGzip() : new PassThrough(),
+      wantsGzip ? createGzip() : new PassThrough({ objectMode: true }),
       target,
     );
   } catch (err) {
