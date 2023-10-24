@@ -7,6 +7,7 @@ import { ModelRegistry, QuadsGeneratorFunc } from "./models/models.js";
 
 // Register known quad generating modules here.
 // I don't know how to make this a true plugin (but that's not really necessary either)
+// The order of models is important: the first model is the default.
 const WellKnownModels = { "facade-x": quadsFromGeoPackage };
 for (const [modelName, func] of Object.entries(WellKnownModels))
   ModelRegistry.add(modelName, func);

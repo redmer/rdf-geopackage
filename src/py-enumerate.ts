@@ -1,4 +1,8 @@
-/** Enumerate over an iterable, generating an index and the item */
+/**
+ * Enumerate over an iterable, generating an index and an item.
+ * @param iterable An iterable
+ * @param initial First returned index
+ */
 export function* enumerate<T>(
   iterable: Iterable<T>,
   initial = 0,

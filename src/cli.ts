@@ -117,6 +117,7 @@ async function cli() {
   });
 
   // `Error parsing geometry`: the GeoPackage may output errors to console.log.
+  // This line disables console.log by hackily overriding it.
   console.log = function () {};
 
   try {
