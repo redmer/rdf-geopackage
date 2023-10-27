@@ -19,8 +19,8 @@ Options:
       --version                Show version number                     [boolean]
   -i, --input                  GeoPackage file                          [string]
   -o, --output                 Output quads file                        [string]
-      --bounding-box           Limit features to bounding box           [string]
-      --bounding-box-crs       Coordinate Reference System code         [string]
+      --bbox                   Limit features to bounding box           [string]
+      --bbox-crs               Coordinate Reference System code         [string]
       --only-layers            Only output named feature layers and attribute ta
                                bles                                      [array]
       --base-iri               Base IRI                                 [string]
@@ -32,9 +32,9 @@ Options:
 
 ## Options
 
-Limit **large GeoPackages** with `--bounding-box`.
+Limit **large GeoPackages** with `--bbox`.
 Supply a space separated list of coordinates as a string to limit the Features returned.
-Provide the bounding box as WGS84 (GeoJSON default) or supply a CRS code (lookup via EPSG.io) or Projection WKT with `--bounding-box-crs`.
+Provide the bounding box as WGS84 (GeoJSON default) or supply a CRS code (lookup via EPSG.io) or Projection WKT with `--bbox-crs`.
 
 You can also **limit** which feature **layers** (or attribute tables) are output with `--only-layers`.
 **NULL values** are never output and **binary values** are skipped, unless `--include-binary-values` is provided.
@@ -60,7 +60,7 @@ That Geometry in turn has a `geo:asGeoJSON` and `geo:asWKT` representations of t
 
 Column metadata is very limited and most values are not typed properly.
 Example data abridged [from NGA][example.gpkg]:
-the table `media`is a feature table, `nga_properties` is an attribute table.
+the table `media` is a feature table, `nga_properties` is an attribute table.
 
 ```trig
 xyz:media {

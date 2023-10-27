@@ -41,11 +41,11 @@ async function cli() {
     })
     .option("output", { alias: "o", type: "string", desc: "Output quads file" })
     .normalize(["input", "output"])
-    .option("bounding-box", {
+    .option("bbox", {
       type: "string",
       desc: "Limit features to bounding box",
     })
-    .option("bounding-box-crs", {
+    .option("bbox-crs", {
       type: "string",
       desc: `Coordinate Reference System code`,
     })
@@ -87,11 +87,11 @@ async function cli() {
   // If there's a bounding box CRS defined, first check if we can parse it.
   // This is less expensive than converting quads etc.
   // TODO: Can we remove this reference to WGS84?
-  const bboxConverter = argv.boundingBoxCrs
-    ? await getWGS84Converter(argv.boundingBoxCrs)
+  const bboxConverter = argv.bboxCrs
+    ? await getWGS84Converter(argv.bboxCrs)
     : await getWGS84Converter(WGS84_CODE);
-  const boundingBox = argv.boundingBox
-    ? suppliedBoundingBox(argv.boundingBox, bboxConverter)
+  const boundingBox = argv.bbox
+    ? suppliedBoundingBox(argv.bbox, bboxConverter)
     : undefined;
 
   // If there's a target file, open a write stream and determine the mimetype off of it.
