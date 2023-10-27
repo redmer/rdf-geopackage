@@ -21,8 +21,8 @@ Options:
   -o, --output                 Output quads file                        [string]
       --format                 Override output format (default: nquads)
             [choices: "nq", "nquads", "trig", "nt", "ntriples", "ttl", "turtle"]
-      --bounding-box           Limit features to bounding box           [string]
-      --bounding-box-crs       Coordinate Reference System code         [string]
+      --bbox                   Limit features to bounding box           [string]
+      --bbox-crs               Coordinate Reference System code         [string]
       --only-layers            Only output named feature layers and attribute ta
                                bles                                      [array]
       --include-binary-values  Output binary values                    [boolean]

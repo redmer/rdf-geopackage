@@ -42,20 +42,61 @@ export async function getWGS84Converter(
   }
 }
 
-export function suppliedBoundingBox(
+function spaceSepBbox(
   bbstring: string,
-  inCRS: proj4.Converter | string,
-) {
+  srs: proj4.Converter | string,
+): BoundingBox {
+  const [west, east, south, north] = bbstring
+    .split(" ", 4)
+    .map((c) => Number(c));
+  const bb = new BoundingBox(west, east, south, north);
+  return bb.projectBoundingBox(srs, WGS84_CODE);
+}
+
+function commaSepBbox(
+  bbstring: string,
+  srs: proj4.Converter | string,
+): BoundingBox {
+  const parts = bbstring.split(",");
+  let west: string,
+    east: string,
+    __1: string,
+    south: string,
+    north: string,
+    __2: string;
+  if (parts.length == 4) [west, east, south, north] = parts;
+  else [west, east, __1, south, north, __2] = parts;
+
+  const bb = new BoundingBox(
+    Number(west),
+    Number(east),
+    Number(south),
+    Number(north),
+  );
+  return bb.projectBoundingBox(srs, WGS84_CODE);
+}
+
+/**
+ * Convert a supplied bbox definition string to a {BoundingBox}.
+ *
+ * There are two types of bbox definition strings:
+ * 1. Four parts, space separated (deprecated)
+ * 2. Four or six parts, comma separated. (3rd axis ignored)
+ *
+ * @param bboxString Bouding box provided string
+ * @param srs The SRS in which to interpret this bboxstring
+ */
+export function suppliedBoundingBox(
+  bboxString: string,
+  srs: proj4.Converter | string,
+): BoundingBox {
   try {
-    const [west, east, south, north] = bbstring
-      .split(" ", 4)
-      .map((c) => Number(c));
-    const bb = new BoundingBox(west, east, south, north);
-    return bb.projectBoundingBox(inCRS, WGS84_CODE);
+    if (bboxString.includes(" ")) return spaceSepBbox(bboxString, srs);
+    return commaSepBbox(bboxString, srs);
   } catch (e) {
     Bye(
-      `Bounding box could not be parsed. Provide as a single space-separated string:`,
-      `"{min long (west)} {max long (east)} {min lat (south)} {max lat (north)}".`,
+      `Bounding box could not be parsed. Provide a single comma-separated string:`,
+      `"{min long (west)},{max long (east)},{min lat (south)},{max lat (north)}".`,
     );
   }
 }
