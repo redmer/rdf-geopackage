@@ -1,3 +1,4 @@
+import type { SpatialReferenceSystem } from "@ngageoint/geopackage";
 import type { DBValue } from "@ngageoint/geopackage/dist/lib/db/dbAdapter.js";
 import type * as RDF from "@rdfjs/types";
 import { DataFactory } from "rdf-data-factory";
@@ -12,6 +13,8 @@ export interface QuadsFromTableOptions {
   baseIRI: string;
   /** See {@link GeoPackageOptions}  */
   includeBinaryValues?: boolean;
+  /** Spatial Reference System of this table */
+  srs?: SpatialReferenceSystem;
 }
 
 const DF = new DataFactory();

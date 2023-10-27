@@ -2,7 +2,6 @@
 
 [![Get latest version](https://img.shields.io/npm/v/%40rdmr-eu/rdf-geopackage)](https://www.npmjs.com/package/@rdmr-eu/rdf-geopackage)
 
-
 Generate RDF out of a GeoPackage (for further processing)
 
 ## Usage
@@ -89,3 +88,11 @@ xyz:nga_properties a fx:root ;
 
 [geosparql]: https://www.ogc.org/standard/geosparql/
 [example.gpkg]: https://github.com/ngageoint/GeoPackage/blob/master/docs/examples/java/example.gpkg
+
+# Acknowledgements
+
+This tool was developed for a project funded by the [_City Deal Openbare ruimte_][cdor],
+executed by [Stichting Kennisplatform CROW][crow].
+
+[crow]: https://crow.nl/
+[cdor]: https://www.citydealopenbareruimte.nl/

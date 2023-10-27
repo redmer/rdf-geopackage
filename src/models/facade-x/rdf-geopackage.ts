@@ -1,6 +1,8 @@
 import { GeoPackage } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
+import { WGS84_CODE } from "../../bounding-box.js";
 import { GeoPackageOptions } from "../../geopackage.js";
+import { queryAllFeatures } from "./featuredao-helper.js";
 import { quadsFromAttributeTable } from "./rdf-attribute-table.js";
 import { quadsFromFeatureTable } from "./rdf-feature-table.js";
 
@@ -37,13 +39,18 @@ export function* quadsFromGeoPackage(
 
   for (const tableName of geopackage.getFeatureTables()) {
     if (allowedLayers && !allowedLayers.includes(tableName)) continue;
-    // The bounding box is optional, but recommended for large GeoPackages
-    const it = geopackage.iterateGeoJSONFeatures(tableName, boundingBox);
+    // The bounding box is optional, but useful for large GeoPackages
+    const dao = geopackage.getFeatureDao(tableName);
+
+    const it = boundingBox
+      ? dao.fastQueryBoundingBox(boundingBox, WGS84_CODE)
+      : queryAllFeatures(dao);
 
     yield* quadsFromFeatureTable(it, {
       tableName,
       baseIRI,
       includeBinaryValues: options.includeBinaryValues,
+      srs: dao.srs, // table SRS
     });
   }
 }
