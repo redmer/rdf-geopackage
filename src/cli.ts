@@ -86,11 +86,12 @@ async function cli() {
 
   // If there's a bounding box CRS defined, first check if we can parse it.
   // This is less expensive than converting quads etc.
-  const converter = argv.boundingBoxCrs
+  // TODO: Can we remove this reference to WGS84?
+  const bboxConverter = argv.boundingBoxCrs
     ? await getWGS84Converter(argv.boundingBoxCrs)
-    : WGS84_CODE;
+    : await getWGS84Converter(WGS84_CODE);
   const boundingBox = argv.boundingBox
-    ? suppliedBoundingBox(argv.boundingBox, converter)
+    ? suppliedBoundingBox(argv.boundingBox, bboxConverter)
     : undefined;
 
   // If there's a target file, open a write stream and determine the mimetype off of it.

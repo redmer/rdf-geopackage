@@ -19,7 +19,13 @@
   ],
   "types": "dist/rdf-geopackage.d.ts",
   "type": "module",
-  "keywords": [],
+  "keywords": [
+    "geojson",
+    "geosparql",
+    "rdf",
+    "geopackage",
+    "linked-data"
+  ],
   "author": "Redmer Kronemeijer <12477216+redmer@users.noreply.github.com> (https://rdmr.eu/)",
   "license": "MPL-2.0",
   "prettier": {},
@@ -48,6 +54,7 @@
     "@types/json-stable-stringify": "^1.0.34",
     "@types/n3": "^1.16.0",
     "@types/node": "^20.8.8",
+    "@types/proj4": "^2.5.4",
     "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
@@ -61,8 +68,6 @@
   },
   "dependencies": {
     "@ngageoint/geopackage": "^4.2.4",
-    "@ngageoint/simple-features-geojson-js": "^1.1.1",
-    "@ngageoint/simple-features-wkt-js": "^1.1.1",
     "better-sqlite3": "^8.7.0",
     "geojson": "^0.5.0",
     "json-stable-stringify": "^1.0.2",
