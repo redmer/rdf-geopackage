@@ -3,7 +3,6 @@ import type {
   SpatialReferenceSystem,
 } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import type { WellKnownSerializations } from "./models/geosparql/index.js";
 
 /** Info on a table */
 export interface TableContext {
@@ -36,8 +35,6 @@ export interface RDFContext {
   factory: RDF.DataFactory;
 }
 
-// TODO: Override target CRS?
-
 /** Info on how to generate RDF */
 export interface RDFOptions {
   /** Generate quads where the object/value is a (base64 encoded) binary */
@@ -45,5 +42,5 @@ export interface RDFOptions {
   /** Data meta model identifier by which triples are generated */
   model: string;
   /** Limit the generated GeoSPARQL serializations */
-  geoSPARQLModels: (typeof WellKnownSerializations)[number][];
+  geoSPARQLModels: string[];
 }

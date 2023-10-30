@@ -24,8 +24,7 @@ import {
   mimetypeForExtension,
   supportsGraphs,
 } from "./mimetypes.js";
-import { WellKnownSerializations } from "./models/geosparql/index.js";
-import { ModelRegistry } from "./models/models.js";
+import { ModuleRegistry, Registry } from "./models/models-registry.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
 import { MergeGraphsStream } from "./rdf-stream-override.js";
 
@@ -67,7 +66,7 @@ async function cli() {
     .option("model", {
       desc: "Data meta model",
     })
-    .choices("model", ModelRegistry.knownModels())
+    .choices("model", ModuleRegistry.knownModels(Registry.Generic))
     .strict();
   const argv = await options.parse();
 
@@ -108,7 +107,8 @@ async function cli() {
 
   const inTriples = !supportsGraphs(mimetype);
   const wantsGzip: boolean = argv.output?.endsWith(".gz");
-  const model: string = argv.model ?? ModelRegistry.knownModels()[0];
+  const model: string =
+    argv.model ?? ModuleRegistry.knownModels(Registry.Generic)[0];
 
   const parser = new GeoPackageParser(input, {
     model,
@@ -116,7 +116,7 @@ async function cli() {
     allowedLayers: argv.onlyLayers,
     baseIRI,
     includeBinaryValues: Boolean(argv.includeBinaryValues),
-    geoSPARQLModels: WellKnownSerializations,
+    geoSPARQLModels: ModuleRegistry.knownModels(Registry.Geometry),
     factory: null,
   });
 

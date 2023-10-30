@@ -3,33 +3,42 @@ import stringify from "json-stable-stringify";
 import { DataFactory } from "rdf-data-factory";
 import reproject from "reproject";
 import * as wkx from "wkx";
-import { CLIContext, FeatureTableContext } from "../../interfaces.js";
+import { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS } from "../../prefixes.js";
+import { GeomQuadsGen } from "../models-registry.js";
 
-export default function* quadsForGeoJSON(
-  data: wkx.Geometry,
-  feature: RDF.Quad_Subject,
-  geom: RDF.Quad_Subject,
-  graph: RDF.Quad_Graph,
-  ctx: FeatureTableContext & CLIContext,
-  factory: RDF.DataFactory,
-) {
-  const { srs } = ctx;
-  const { literal, quad } = factory ?? new DataFactory();
+export class GeoJSONSerializer implements GeomQuadsGen {
+  get id() {
+    return "geojson";
+  }
 
-  yield quad(feature, GEO("hasDefaultGeometry"), geom, graph);
-  yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
+  *getQuads(
+    data: wkx.Geometry,
+    feature: RDF.Quad_Subject,
+    geom: RDF.Quad_Subject,
+    graph: RDF.Quad_Graph,
+    ctx: FeatureTableContext,
+    factory: RDF.DataFactory,
+  ) {
+    const { srs } = ctx;
+    const { literal, quad } = factory ?? new DataFactory();
 
-  const wgs84ProjectedJSON = reproject.reproject(
-    data.toGeoJSON(),
-    srs.definition_12_063,
-    "EPSG:4326",
-  );
+    yield quad(feature, GEO("hasDefaultGeometry"), geom, graph);
+    yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
 
-  yield quad(
-    geom,
-    GEO("asGeoJSON"),
-    literal(stringify(wgs84ProjectedJSON), GEO("geoJSONLiteral")),
-    graph,
-  );
+    const wgs84ProjectedJSON = reproject.reproject(
+      data.toGeoJSON(),
+      // Ref: The line after <http://www.geopackage.org/spec121/#r117>
+      srs.definition_12_063 ?? srs.definition,
+      // GeoJSON is always in EPSG:4326
+      "EPSG:4326",
+    );
+
+    yield quad(
+      geom,
+      GEO("asGeoJSON"),
+      literal(stringify(wgs84ProjectedJSON), GEO("geoJSONLiteral")),
+      graph,
+    );
+  }
 }
