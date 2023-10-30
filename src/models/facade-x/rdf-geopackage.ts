@@ -1,7 +1,7 @@
 import { GeoPackage } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { WGS84_CODE } from "../../bounding-box.js";
-import { GeoPackageOptions } from "../../geopackage.js";
+import { CLIContext, RDFContext, RDFOptions } from "../../interfaces.js";
 import { queryAllFeatures } from "./featuredao-helper.js";
 import { quadsFromAttributeTable } from "./rdf-attribute-table.js";
 import { quadsFromFeatureTable } from "./rdf-feature-table.js";
@@ -17,10 +17,11 @@ import { quadsFromFeatureTable } from "./rdf-feature-table.js";
  */
 export function* quadsFromGeoPackage(
   geopackage: GeoPackage,
-  options: GeoPackageOptions,
+  options: CLIContext & RDFContext & RDFOptions,
 ): Generator<RDF.Quad> {
   const { boundingBox, baseIRI, allowedLayers } = options;
 
+  // Iterate user attribute tables
   for (const tableName of geopackage.getAttributesTables()) {
     if (allowedLayers && !allowedLayers.includes(tableName)) continue;
 
@@ -34,9 +35,13 @@ export function* quadsFromGeoPackage(
       tableName,
       baseIRI,
       includeBinaryValues: options.includeBinaryValues,
+      factory: options.factory,
+      geoSPARQLModels: options.geoSPARQLModels,
+      model: options.model,
     });
   }
 
+  // Iterate the feature tables
   for (const tableName of geopackage.getFeatureTables()) {
     if (allowedLayers && !allowedLayers.includes(tableName)) continue;
     // The bounding box is optional, but useful for large GeoPackages
@@ -51,6 +56,9 @@ export function* quadsFromGeoPackage(
       baseIRI,
       includeBinaryValues: options.includeBinaryValues,
       srs: dao.srs, // table SRS
+      model: options.model,
+      geoSPARQLModels: options.geoSPARQLModels,
+      factory: options.factory,
     });
   }
 }

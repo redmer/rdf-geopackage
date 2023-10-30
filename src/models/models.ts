@@ -1,6 +1,6 @@
 import type { GeoPackage } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import type { GeoPackageOptions } from "../geopackage.js";
+import { CLIContext, RDFContext, RDFOptions } from "../interfaces.js";
 
 /**
  * The type signature of a quads generating function
@@ -10,7 +10,7 @@ import type { GeoPackageOptions } from "../geopackage.js";
  */
 export type QuadsGeneratorFunc = (
   geopackage: GeoPackage,
-  options: GeoPackageOptions,
+  options: CLIContext & RDFContext & RDFOptions,
 ) => Generator<RDF.Quad>;
 
 /** Singleton registry of Quad generating models */

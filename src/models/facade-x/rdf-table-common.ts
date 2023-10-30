@@ -1,59 +1,56 @@
-import type { SpatialReferenceSystem } from "@ngageoint/geopackage";
 import type { DBValue } from "@ngageoint/geopackage/dist/lib/db/dbAdapter.js";
 import type * as RDF from "@rdfjs/types";
-import { DataFactory } from "rdf-data-factory";
 import { toRdf } from "rdf-literal";
+import { RDFContext, RDFOptions, TableContext } from "../../interfaces.js";
 import { FX, RDFNS, XSD, XYZ } from "../../prefixes.js";
-
-export interface QuadsFromTableOptions {
-  /** Name of the originating table */
-  tableName: string;
-  /** Columns that are unique ID columns */
-  tableIDColumns?: string[];
-  baseIRI: string;
-  /** See {@link GeoPackageOptions}  */
-  includeBinaryValues?: boolean;
-  /** Spatial Reference System of this table */
-  srs?: SpatialReferenceSystem;
-}
-
-const DF = new DataFactory();
 
 /** Generate an RDF Literal from a value */
 export function valueToTerm(
   value: DBValue,
   includeBinaryValue: boolean,
+  factory: RDF.DataFactory,
 ): RDF.Quad_Object {
   if (value == null) return undefined;
 
   if (value instanceof Buffer)
     if (includeBinaryValue)
-      return DF.literal(value.toString("base64"), XSD("base64Binary"));
+      return factory.literal(value.toString("base64"), XSD("base64Binary"));
     else return undefined;
 
   return toRdf(value);
 }
 
 /** Generate the RDF NamedNode for the attribute or feature table */
-export function getTableNode(tableName: string, base?: string): RDF.NamedNode {
+export function getTableNode(
+  tableName: string,
+  factory: RDF.DataFactory,
+  base?: string,
+): RDF.NamedNode {
   const baseURL = base ?? XYZ("").value;
   const tableURL = new URL(encodeURIComponent(tableName), baseURL);
-  return DF.namedNode(tableURL.href);
+  return factory.namedNode(tableURL.href);
 }
 
 /** Generate the RDF Node for the row / feature */
-export function getRowNode(rowIdValue: string, base?: string) {
-  return DF.blankNode();
+export function getRowNode(
+  rowIdValue: string,
+  factory: RDF.DataFactory,
+  base?: string,
+) {
+  return factory.blankNode();
 }
 
 /** Generate Facade-X quads that represent the table its rows */
 export function* quadsForTableAndRow(
-  tableAndGraph: RDF.NamedNode,
-  row: RDF.NamedNode | RDF.BlankNode,
+  tableAndGraph: RDF.Quad_Subject & RDF.Quad_Graph,
+  row: RDF.Quad_Subject,
   i: number,
+  factory: RDF.DataFactory,
 ) {
-  yield DF.quad(tableAndGraph, RDFNS("type"), FX("root"), tableAndGraph);
-  yield DF.quad(tableAndGraph, RDFNS(`_${i}`), row, tableAndGraph);
+  const { quad } = factory;
+
+  yield quad(tableAndGraph, RDFNS("type"), FX("root"), tableAndGraph);
+  yield quad(tableAndGraph, RDFNS(`_${i}`), row, tableAndGraph);
 }
 
 /** Iterate properties and generate Facade-X quads */
@@ -61,10 +58,11 @@ export function* quadsForAttributes(
   entry: Record<string, any>,
   subject: RDF.Quad_Subject,
   graph: RDF.Quad_Graph,
-  options: QuadsFromTableOptions,
+  options: RDFOptions & TableContext & RDFContext,
 ) {
+  const { quad } = options.factory;
   for (const [k, v] of Object.entries(entry)) {
-    const value = valueToTerm(v, options.includeBinaryValues);
-    if (value) yield DF.quad(subject, XYZ(encodeURI(k)), value, graph);
+    const value = valueToTerm(v, options.includeBinaryValues, options.factory);
+    if (value) yield quad(subject, XYZ(encodeURI(k)), value, graph);
   }
 }

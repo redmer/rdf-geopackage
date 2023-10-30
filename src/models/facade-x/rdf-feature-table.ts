@@ -8,11 +8,17 @@ import type * as RDF from "@rdfjs/types";
 import type { Feature } from "geojson";
 import stringify from "json-stable-stringify";
 import { DataFactory } from "rdf-data-factory";
+import reproject from "reproject";
 import { Warn } from "../../cli-error.js";
+import {
+  FeatureTableContext,
+  RDFContext,
+  RDFOptions,
+  TableContext,
+} from "../../interfaces.js";
 import { GEO, RDFNS } from "../../prefixes.js";
 import { enumerate } from "../../py-enumerate.js";
 import {
-  QuadsFromTableOptions,
   getRowNode,
   getTableNode,
   quadsForAttributes,
@@ -33,7 +39,7 @@ export function* quadsForGeometry(
   geoJSONData: Feature | undefined,
   subject: RDF.Quad_Subject,
   graph: RDF.Quad_Graph,
-  options: QuadsFromTableOptions,
+  options: FeatureTableContext,
 ) {
   // The underlying libraries (as of writing) do not support all
   // types of geometries. {geoJSONData} and {origData.geometry}
@@ -80,22 +86,35 @@ export function* quadsForGeometry(
     DF.literal(stringify(geoJSONData.geometry), GEO("geoJSONLiteral")),
     graph,
   );
+  geometry.srid = 4326;
+  const newGeoJSON = reproject.reproject(
+    geometry.toGeoJSON(),
+    srs.definition_12_063,
+    "EPSG:4326",
+  );
+  yield DF.quad(
+    wgs84Geom,
+    GEO("asGeoJSON2"),
+    DF.literal(stringify(newGeoJSON), GEO("geoJSONLiteral")),
+    graph,
+  );
 }
 
 /** Generate RDF quads from a GeoPackage feature table */
 export function* quadsFromFeatureTable(
   iterator: IterableIterator<FeatureRow>,
-  options: QuadsFromTableOptions,
+  options: TableContext & FeatureTableContext & RDFOptions & RDFContext,
 ) {
-  const graph = getTableNode(options.tableName);
+  const graph = getTableNode(options.tableName, options.factory);
 
   for (const [i, feature] of enumerate(iterator, 1)) {
     const subject = getRowNode(
       `${options.tableName}_${feature.id ?? i}`,
+      options.factory,
       options.baseIRI,
     );
 
-    yield* quadsForTableAndRow(graph, subject, i);
+    yield* quadsForTableAndRow(graph, subject, i, options.factory);
     yield* quadsForAttributes(feature.values, subject, graph, options);
     yield* quadsForGeometry(
       feature.geometry,

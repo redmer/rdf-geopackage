@@ -24,6 +24,7 @@ import {
   mimetypeForExtension,
   supportsGraphs,
 } from "./mimetypes.js";
+import { WellKnownSerializations } from "./models/geosparql/index.js";
 import { ModelRegistry } from "./models/models.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
 import { MergeGraphsStream } from "./rdf-stream-override.js";
@@ -115,7 +116,10 @@ async function cli() {
     allowedLayers: argv.onlyLayers,
     baseIRI,
     includeBinaryValues: Boolean(argv.includeBinaryValues),
+    geoSPARQLModels: WellKnownSerializations,
+    factory: null,
   });
+
   const writer = new StreamWriter({
     format: mimetype,
     prefixes: {

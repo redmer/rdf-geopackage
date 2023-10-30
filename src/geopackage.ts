@@ -1,7 +1,8 @@
-import { BoundingBox, GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
+import { GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
+import { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
 import { quadsFromGeoPackage } from "./models/facade-x/rdf-geopackage.js";
 import { ModelRegistry, QuadsGeneratorFunc } from "./models/models.js";
 
@@ -12,24 +13,24 @@ const WellKnownModels = { "facade-x": quadsFromGeoPackage };
 for (const [modelName, func] of Object.entries(WellKnownModels))
   ModelRegistry.add(modelName, func);
 
-export interface GeoPackageOptions {
-  /** Pass a data factory or rdf-data-factory is used */
-  dataFactory?: RDF.DataFactory;
-  /** The URL base for local URLs in this GeoPackage */
-  baseIRI?: string;
-  /** Limit the processed feature layers and attribute tables */
-  allowedLayers?: string[];
-  /** Only process features within this EPSG:4326 bounding box. By default, all
-   * features are processed. */
-  boundingBox?: BoundingBox;
-  /** Generate quads where the object/value is a binary (Base-64 encoded). */
-  includeBinaryValues?: boolean;
-  /** Data meta model by which triples are generated */
-  model: string;
-}
+// export interface GeoPackageOptions {
+//   /** Pass a data factory or rdf-data-factory is used */
+//   dataFactory?: RDF.DataFactory;
+//   /** The URL base for local URLs in this GeoPackage */
+//   baseIRI?: string;
+//   /** Limit the processed feature layers and attribute tables */
+//   allowedLayers?: string[];
+//   /** Only process features within this EPSG:4326 bounding box. By default, all
+//    * features are processed. */
+//   boundingBox?: BoundingBox;
+//   /** Generate quads where the object/value is a binary (Base-64 encoded). */
+//   includeBinaryValues?: boolean;
+//   /** Data meta model by which triples are generated */
+//   model: string;
+// }
 
 export class GeoPackageParser extends Readable implements RDF.Stream {
-  options: GeoPackageOptions;
+  options: CLIContext & RDFContext & RDFOptions;
   filepathOrBuffer: string | Buffer | Uint8Array;
   iterQuad: Generator<RDF.Quad>;
   gpkg: GeoPackage;
@@ -43,12 +44,15 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
    */
   constructor(
     filepathOrBuffer: string | Buffer | Uint8Array,
-    options: GeoPackageOptions,
+    options: CLIContext & RDFContext & RDFOptions,
   ) {
     super({ objectMode: true });
 
     this.filepathOrBuffer = filepathOrBuffer;
-    this.options = { dataFactory: new DataFactory(), ...options };
+    this.options = {
+      ...options,
+      factory: new DataFactory() ?? options.factory,
+    };
     this.generator = ModelRegistry.get(this.options.model);
     this.shouldRead = false;
   }
