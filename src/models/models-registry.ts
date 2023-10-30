@@ -40,6 +40,9 @@ export interface GeomQuadsGen {
     ctx: FeatureTableContext,
     factory: RDF.DataFactory,
   ): Generator<RDF.Quad>;
+
+  /** Can this geo:Geometry not be combined with other serializations? */
+  requiresSeparateGeomSubject?(ctx: FeatureTableContext): boolean;
 }
 
 export enum Registry {

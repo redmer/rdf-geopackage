@@ -4,7 +4,6 @@ import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
 import { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
 import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
-import { FeatureOnlySerializer } from "./models/geosparql/feature.js";
 import { GeoJSONSerializer } from "./models/geosparql/geojson.js";
 import { WktSerialization } from "./models/geosparql/wkt.js";
 import {
@@ -16,11 +15,7 @@ import {
 // Register known quad generating modules here.
 // I don't know how to make this a true plugin (but that's not really necessary either)
 // The order of models is important: the first model is the default.
-for (const model of [
-  new WktSerialization(),
-  new GeoJSONSerializer(),
-  new FeatureOnlySerializer(),
-])
+for (const model of [new WktSerialization(), new GeoJSONSerializer()])
   ModuleRegistry.add(Registry.Geometry, model.id, model);
 
 for (const model of [new FacadeXWithGeoSparql()])
@@ -49,7 +44,7 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
     this.filepathOrBuffer = filepathOrBuffer;
     this.options = {
       ...options,
-      factory: options.factory ? options.factory : new DataFactory(),
+      factory: options.factory ?? new DataFactory(),
     };
     this.generator = ModuleRegistry.get(Registry.Generic, this.options.model);
     this.shouldRead = false;

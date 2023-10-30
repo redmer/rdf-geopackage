@@ -1,6 +1,5 @@
 import { SpatialReferenceSystem } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import { DataFactory } from "rdf-data-factory";
 import * as wkx from "wkx";
 import { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS } from "../../prefixes.js";
@@ -27,7 +26,7 @@ export class WktSerialization implements GeomQuadsGen {
     ctx: FeatureTableContext,
     factory: RDF.DataFactory,
   ) {
-    const { literal, quad } = factory ?? new DataFactory();
+    const { literal, quad } = factory;
     yield quad(feature, GEO("hasDefaultGeometry"), geom, graph);
     yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
 
