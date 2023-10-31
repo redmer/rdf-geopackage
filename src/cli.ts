@@ -20,11 +20,11 @@ import { Bye } from "./cli-error.js";
 import { GeoPackageParser } from "./geopackage.js";
 import {
   EXTENSION_MIMETYPES,
-  MimetypeValues,
   mimetypeForExtension,
   supportsGraphs,
+  type MimetypeValues,
 } from "./mimetypes.js";
-import { ModelRegistry } from "./models/models.js";
+import { ModuleRegistry, Registry } from "./models/models-registry.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
 import { MergeGraphsStream } from "./rdf-stream-override.js";
 
@@ -41,6 +41,10 @@ async function cli() {
     })
     .option("output", { alias: "o", type: "string", desc: "Output quads file" })
     .normalize(["input", "output"])
+    .option("format", {
+      desc: "Override output format (default: nquads)",
+    })
+    .choices("format", Object.keys(EXTENSION_MIMETYPES))
     .option("bounding-box", {
       type: "string",
       desc: "Limit features to bounding box",
@@ -54,19 +58,15 @@ async function cli() {
       array: true,
       desc: "Only output named feature layers and attribute tables",
     })
-    .option("base-iri", { type: "string", desc: "Base IRI" })
-    .option("format", {
-      desc: "Override output format (default: nquads)",
-    })
     .option("include-binary-values", {
       type: "boolean",
       desc: "Output binary values",
     })
-    .choices("format", Object.keys(EXTENSION_MIMETYPES))
+    .option("base-iri", { type: "string", desc: "Base IRI" })
     .option("model", {
       desc: "Data meta model",
     })
-    .choices("model", ModelRegistry.knownModels())
+    .choices("model", ModuleRegistry.knownModels(Registry.Generic))
     .strict();
   const argv = await options.parse();
 
@@ -106,8 +106,11 @@ async function cli() {
     : mimetypeForExtension("nq"); // If no valid extension, fallback to nquads.
 
   const inTriples = !supportsGraphs(mimetype);
-  const wantsGzip: boolean = argv.output?.endsWith(".gz");
-  const model: string = argv.model ?? ModelRegistry.knownModels()[0];
+  const wantsGzip: boolean =
+    argv.output?.endsWith(".gz") ?? argv.format?.endsWith(".gz") ?? false;
+  const model: string =
+    argv.model ?? ModuleRegistry.knownModels(Registry.Generic)[0];
+  const DF = new DataFactory();
 
   const parser = new GeoPackageParser(input, {
     model,
@@ -115,7 +118,10 @@ async function cli() {
     allowedLayers: argv.onlyLayers,
     baseIRI,
     includeBinaryValues: Boolean(argv.includeBinaryValues),
+    geoSPARQLModels: ModuleRegistry.knownModels(Registry.Geometry),
+    factory: DF,
   });
+
   const writer = new StreamWriter({
     format: mimetype,
     prefixes: {
@@ -130,7 +136,6 @@ async function cli() {
   // `Error parsing geometry`: the GeoPackage may output errors to console.log.
   // This line disables console.log by hackily overriding it.
   console.log = function () {};
-  const DF = new DataFactory();
 
   try {
     pipeline(

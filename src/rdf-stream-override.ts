@@ -1,6 +1,6 @@
-import * as RDF from "@rdfjs/types";
+import type * as RDF from "@rdfjs/types";
 import { DataFactory } from "rdf-data-factory";
-import { Transform, TransformCallback } from "stream";
+import { Transform, type TransformCallback } from "stream";
 
 export interface OverrideGraphOptions {
   /** Override the context/graph of the quad into */

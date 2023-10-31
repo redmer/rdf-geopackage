@@ -1,40 +1,34 @@
-import { BoundingBox, GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
+import { GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
-import { quadsFromGeoPackage } from "./models/facade-x/rdf-geopackage.js";
-import { ModelRegistry, QuadsGeneratorFunc } from "./models/models.js";
+import type { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
+import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
+import { GeoJSONSerializer } from "./models/geosparql/geojson.js";
+import { WktSerialization } from "./models/geosparql/wkt.js";
+import {
+  ModuleRegistry,
+  Registry,
+  type QuadsGen,
+} from "./models/models-registry.js";
 
 // Register known quad generating modules here.
 // I don't know how to make this a true plugin (but that's not really necessary either)
 // The order of models is important: the first model is the default.
-const WellKnownModels = { "facade-x": quadsFromGeoPackage };
-for (const [modelName, func] of Object.entries(WellKnownModels))
-  ModelRegistry.add(modelName, func);
+for (const model of [new WktSerialization(), new GeoJSONSerializer()])
+  ModuleRegistry.add(Registry.Geometry, model.id, model);
 
-export interface GeoPackageOptions {
-  /** Pass a data factory or rdf-data-factory is used */
-  dataFactory?: RDF.DataFactory;
-  /** The URL base for local URLs in this GeoPackage */
-  baseIRI?: string;
-  /** Limit the processed feature layers and attribute tables */
-  allowedLayers?: string[];
-  /** Only process features within this EPSG:4326 bounding box. By default, all
-   * features are processed. */
-  boundingBox?: BoundingBox;
-  /** Generate quads where the object/value is a binary (Base-64 encoded). */
-  includeBinaryValues?: boolean;
-  /** Data meta model by which triples are generated */
-  model: string;
-}
+for (const model of [new FacadeXWithGeoSparql()])
+  ModuleRegistry.add(Registry.Generic, model.id, model);
 
+/** Helper class to parse */
 export class GeoPackageParser extends Readable implements RDF.Stream {
-  options: GeoPackageOptions;
+  options: CLIContext & RDFContext & RDFOptions;
   filepathOrBuffer: string | Buffer | Uint8Array;
   iterQuad: Generator<RDF.Quad>;
   gpkg: GeoPackage;
   shouldRead: boolean;
-  generator: QuadsGeneratorFunc;
+  generator: QuadsGen;
 
   /**
    * Read a GeoPackage and output a stream of RDF.Quads
@@ -43,13 +37,16 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
    */
   constructor(
     filepathOrBuffer: string | Buffer | Uint8Array,
-    options: GeoPackageOptions,
+    options: CLIContext & RDFContext & RDFOptions,
   ) {
     super({ objectMode: true });
 
     this.filepathOrBuffer = filepathOrBuffer;
-    this.options = { dataFactory: new DataFactory(), ...options };
-    this.generator = ModelRegistry.get(this.options.model);
+    this.options = {
+      ...options,
+      factory: options.factory ?? new DataFactory(),
+    };
+    this.generator = ModuleRegistry.get(Registry.Generic, this.options.model);
     this.shouldRead = false;
   }
 
@@ -57,7 +54,7 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
     GeoPackageAPI.open(this.filepathOrBuffer)
       .then((gpkg) => {
         this.gpkg = gpkg;
-        this.iterQuad = this.generator(this.gpkg, this.options);
+        this.iterQuad = this.generator.getQuads(this.gpkg, this.options);
         callback();
       })
       .catch(callback);

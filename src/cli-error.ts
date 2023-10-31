@@ -26,3 +26,18 @@ export function Warn(message: string, ...optionalParams: any[]): void {
     );
   else console.warn(`# Warning: ${message}`, ...optionalParams);
 }
+
+let WARNINGS: Record<string, number> = {};
+
+/** Collect warnings and output with call counts with OutputWarnCounts() */
+export function CountWarn(message: string): void {
+  const value = WARNINGS[message];
+  WARNINGS[message] = value === undefined ? 1 : value + 1;
+}
+
+/** Output collected warnings (CountWarn) with call counts */
+export function OutputWarnCounts(): void {
+  for (const [message, count] of Object.entries(WARNINGS))
+    Warn(`${message}: ${count}`);
+  WARNINGS = {};
+}
