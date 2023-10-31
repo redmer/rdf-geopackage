@@ -75,12 +75,13 @@ A `geo:Geometry` can be in only one CRS, meaning that when the feature is not or
 That is undesirable, so in these cases, `rdf-geopackage` generates a second `geo:Geometry` for the WKT serialization (`geo:asWKT`).
 
 [geosparql]: https://www.ogc.org/standard/geosparql/
-[example.gpkg]: https://github.com/ngageoint/GeoPackage/blob/master/docs/examples/java/example.gpkg
 
 #### Example RDF output
 
 Example data abridged [from NGA][example.gpkg]:
 the table `media` is a feature table, `nga_properties` is an attribute table.
+
+[example.gpkg]: https://github.com/ngageoint/GeoPackage/blob/master/docs/examples/java/example.gpkg
 
 ```turtle
 prefix fx: <http://sparql.xyz/facade-x/ns/>
@@ -107,7 +108,7 @@ xyz:media a fx:root ;
     geo:hasDefaultGeometry [  # single geometry as CRS is EPSG:4326
       a geo:Geometry ;
       geo:asWKT "POINT (-104.801918 39.720014)"^^geo:wktLiteral ;
-      geo:asGeoJSON "{\"coordinates\":[-104.801918,39.720014],\"type\":\"Point\"}"^^geo:geoJSONLiteral.
+      geo:asGeoJSON "{\"coordinates\":[-104.801918,39.720014],\"type\":\"Point\"}"^^geo:geoJSONLiteral
     ]
   ] .
 }
