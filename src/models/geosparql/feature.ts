@@ -1,8 +1,8 @@
 import type * as RDF from "@rdfjs/types";
 import type * as wkx from "wkx";
-import { FeatureTableContext } from "../../interfaces.js";
+import type { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS } from "../../prefixes.js";
-import { GeomQuadsGen } from "../models-registry.js";
+import type { GeomQuadsGen } from "../models-registry.js";
 
 export class FeatureOnlySerializer implements GeomQuadsGen {
   get id() {

@@ -9,7 +9,7 @@ Generate RDF out of a GeoPackage (for further processing)
 Install using NPM locally `npm install --global @rdmr-eu/rdf-geopackage` as a command line tool.
 
 Check if it's installed correctly with `rdf-geopackage --help`.
-That should return the following help info.
+That should return the following help info:
 
 ```man
 Generate RDF from an OGC GeoPackage with rdf-geopackage
@@ -48,43 +48,20 @@ Work with large GeoPackages by limiting the output features, output tables and b
 Modify the model and types of the output triples or quads:
 
 - `--base-iri`: set the relative base for the output RDF data. By default, this value is derived from the present working directory.
-- `--model`: the GeoPackage tables are not natively RDF data, so a module is programmed to generating triples according to a data meta-model.
+- `--model`: the GeoPackage tables are not natively RDF data, so a module is programmed to generating triples according to a data meta-model. Included modules:
   - default: [`facade-x`](#model-facade-x)
 
-## Model: Facade-X
+## RDF output
 
-Facade-X is a data meta-model from the SPARQL-Anything project, that can represent tabular data easily.
+#### Model: Facade-X
+
+Facade-X is a data meta-model from the SPARQL-Anything project, that can easily represent tabular data.
 Facade-X uses RDF containers and blank nodes to represent tables and rows.
+Column metadata is currently very limited ([GH-24]) and many values are not typed properly.
 
-Column metadata is very limited and many values are not typed properly.
-Example data abridged [from NGA][example.gpkg]:
-the table `media` is a feature table, `nga_properties` is an attribute table.
+[GH-24]: https://github.com/redmer/rdf-geopackage/issues/24
 
-```trig
-xyz:media {
-xyz:media a fx:root ;
-  rdf:_1 [
-    a geo:Feature ;
-    xyz:text "BIT Systems";
-    xyz:date "2023-01-23";
-    geo:hasDefaultGeometry [
-      a geo:Geometry ;
-      geo:asWKT "POINT (-104.801918 39.720014)"^^geo:wktLiteral
-    ]
-  ] .
-}
-
-xyz:nga_properties {
-xyz:nga_properties a fx:root ;
-  rdf:_1 [
-    xyz:id 14;
-    xyz:property "subject";
-    xyz:value "Examples"
-  ] .
-}
-```
-
-# Features, geometries and CRS’s
+#### Features, geometries and CRS’s
 
 Features and their geometries are represented using [GeoSPARQL][geosparql].
 Only rows from feature tables are a `geo:Feature`.
@@ -99,6 +76,42 @@ That is undesirable, so in these cases, `rdf-geopackage` generates a second `geo
 
 [geosparql]: https://www.ogc.org/standard/geosparql/
 [example.gpkg]: https://github.com/ngageoint/GeoPackage/blob/master/docs/examples/java/example.gpkg
+
+#### Example RDF output
+
+Example data abridged [from NGA][example.gpkg]:
+the table `media` is a feature table, `nga_properties` is an attribute table.
+
+```turtle
+prefix fx: <http://sparql.xyz/facade-x/ns/>
+prefix geo: <http://www.opengis.net/ont/geosparql#>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix xyz: <http://sparql.xyz/facade-x/data/>
+
+xyz:nga_properties {  # representing a table
+xyz:nga_properties a fx:root ;  # representing a table
+  rdf:_1 [  # the first row
+    xyz:id 14;
+    xyz:property "subject";
+    xyz:value "Examples"
+  ] .
+}
+
+xyz:media {
+xyz:media a fx:root ;
+  rdf:_1 [
+    a geo:Feature ;  # a row from a feature table
+    xyz:text "BIT Systems";
+    xyz:date "2023-01-23";
+    geo:hasDefaultGeometry [  # single geometry as CRS is EPSG:4326
+      a geo:Geometry ;
+      geo:asWKT "POINT (-104.801918 39.720014)"^^geo:wktLiteral ;
+      geo:asGeoJSON "{\"coordinates\":[-104.801918,39.720014],\"type\":\"Point\"}"^^geo:geoJSONLiteral.
+    ]
+  ] .
+}
+```
 
 # Acknowledgements
 

@@ -20,9 +20,9 @@ import { Bye } from "./cli-error.js";
 import { GeoPackageParser } from "./geopackage.js";
 import {
   EXTENSION_MIMETYPES,
-  MimetypeValues,
   mimetypeForExtension,
   supportsGraphs,
+  type MimetypeValues,
 } from "./mimetypes.js";
 import { ModuleRegistry, Registry } from "./models/models-registry.js";
 import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";

@@ -1,10 +1,10 @@
 import type * as RDF from "@rdfjs/types";
 import stringify from "json-stable-stringify";
 import reproject from "reproject";
-import * as wkx from "wkx";
-import { FeatureTableContext } from "../../interfaces.js";
+import type * as wkx from "wkx";
+import type { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS } from "../../prefixes.js";
-import { GeomQuadsGen } from "../models-registry.js";
+import type { GeomQuadsGen } from "../models-registry.js";
 
 export class GeoJSONSerializer implements GeomQuadsGen {
   get id() {

@@ -2,14 +2,14 @@ import { GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
-import { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
+import type { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
 import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
 import { GeoJSONSerializer } from "./models/geosparql/geojson.js";
 import { WktSerialization } from "./models/geosparql/wkt.js";
 import {
   ModuleRegistry,
-  QuadsGen,
   Registry,
+  type QuadsGen,
 } from "./models/models-registry.js";
 
 // Register known quad generating modules here.

@@ -1,10 +1,10 @@
 import type { GeoPackage, GeometryData } from "@ngageoint/geopackage";
 import type { DBValue } from "@ngageoint/geopackage/dist/lib/db/dbAdapter.js";
 import type { FeatureRow } from "@ngageoint/geopackage/dist/lib/features/user/featureRow.js";
-import * as RDF from "@rdfjs/types";
+import type * as RDF from "@rdfjs/types";
 import { WGS84_CODE } from "../../bounding-box.js";
 import { CountWarn, OutputWarnCounts } from "../../cli-error.js";
-import {
+import type {
   CLIContext,
   FeatureTableContext,
   RDFContext,
@@ -13,7 +13,7 @@ import {
 } from "../../interfaces.js";
 import { FX, GEO, RDFNS, XYZ } from "../../prefixes.js";
 import { enumerate } from "../../py-enumerate.js";
-import { ModuleRegistry, QuadsGen, Registry } from "../models-registry.js";
+import { ModuleRegistry, Registry, type QuadsGen } from "../models-registry.js";
 import { valueToTerm } from "../utils.js";
 import { queryAllFeatures } from "./featuredao-helper.js";
 
