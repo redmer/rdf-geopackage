@@ -49,7 +49,15 @@ Modify the model and types of the output triples or quads:
 
 - `--base-iri`: set the relative base for the output RDF data. By default, this value is derived from the present working directory.
 - `--model`: the GeoPackage tables are not natively RDF data, so a module is programmed to generating triples according to a data meta-model. Included modules:
-  - default: [`facade-x`](#model-facade-x)
+  - **default**: [`facade-x`](#model-facade-x)
+- `--geosparql`: modify which GeoSPARQL geometries, serializations and properties are output. Only the WKT literal is a representation in native CRS, all other are calculated and/or projected. Included modules:
+  - **default**: `wkt`
+  - `wkt`: using `geo:asWKT` with a WKT string literal (`geo:wktLiteral`)
+  - `geojson`: using `geo:asGeoJSON` with a WGS84 GeoJSON string literal (`geo:geoJSONLiteral`) of the `geometry` object
+  - `bbox`: output an envelope geometry of the feature (`geo:hasBoundingBox`) -- calculated using WGS84
+  - `centroid`: output a centroid point geometry of the featuer (`geo:hasCentroid`)
+  - `length-area`: output the length of the feature (`geo:hasMetricLength` in m) and the area of the feature (`geo:hasMetricArea` in m²)
+  - pass an empty array to only generate `[ rdf:type geo:Feature ]` quads and no geometries
 
 ## RDF output
 

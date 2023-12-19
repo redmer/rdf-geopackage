@@ -15,3 +15,4 @@ export const RDFNS = prefix("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 export const XYZ = prefix("http://sparql.xyz/facade-x/data/");
 export const FX = prefix("http://sparql.xyz/facade-x/ns/");
 export const GEO = prefix("http://www.opengis.net/ont/geosparql#");
+export const SF = prefix("http://www.opengis.net/ont/sf#");
