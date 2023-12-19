@@ -67,6 +67,13 @@ async function cli() {
       desc: "Data meta model",
     })
     .choices("model", ModuleRegistry.knownModels(Registry.Generic))
+    .option("geosparql", {
+      desc: "Output GeoSPARQL",
+      type: "string",
+      array: true,
+    })
+    .choices("geosparql", ModuleRegistry.knownModels(Registry.Geometry))
+    .default("geosparql", ["wkt"])
     .strict();
   const argv = await options.parse();
 
@@ -110,6 +117,8 @@ async function cli() {
     argv.output?.endsWith(".gz") ?? argv.format?.endsWith(".gz") ?? false;
   const model: string =
     argv.model ?? ModuleRegistry.knownModels(Registry.Generic)[0];
+  const geoSPARQLModels: string[] =
+    argv.geosparql ?? ModuleRegistry.knownModels(Registry.Geometry);
   const DF = new DataFactory();
 
   const parser = new GeoPackageParser(input, {
@@ -118,7 +127,7 @@ async function cli() {
     allowedLayers: argv.onlyLayers,
     baseIRI,
     includeBinaryValues: Boolean(argv.includeBinaryValues),
-    geoSPARQLModels: ModuleRegistry.knownModels(Registry.Geometry),
+    geoSPARQLModels,
     factory: DF,
   });
 

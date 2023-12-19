@@ -1,6 +1,5 @@
-import type { GeoPackage } from "@ngageoint/geopackage";
+import type { GeoPackage, GeometryData } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import type * as wkx from "wkx";
 import type {
   CLIContext,
   FeatureTableContext,
@@ -25,7 +24,7 @@ export interface GeomQuadsGen {
    * The type signature of a quads generation function for different RDF
    * geometry serializations.
    *
-   * @param data The WKX Geometry
+   * @param data The GeoPackage GeometryData
    * @param feature The RDF term of the feature
    * @param geom The RDF term of the geometry
    * @param graph The RDF term of the graph of the quads
@@ -33,7 +32,7 @@ export interface GeomQuadsGen {
    * @param factory An RDF/JS DataFactory
    */
   getQuads(
-    data: wkx.Geometry,
+    data: GeometryData,
     feature: RDF.Quad_Subject,
     geom: RDF.Quad_Subject,
     graph: RDF.Quad_Graph,

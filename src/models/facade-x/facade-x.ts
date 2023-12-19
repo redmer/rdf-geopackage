@@ -119,14 +119,13 @@ export class FacadeXWithGeoSparql implements QuadsGen {
     graph: RDF.Quad_Graph,
     options: FeatureTableContext & RDFOptions,
   ) {
-    const geometry = data.geometry;
+    // The feature is a geo:Feature and should be output as such
+    yield this.DF.quad(feature, RDFNS("type"), GEO("Feature"), graph);
 
     // The underlying libraries (as of writing) do not support all
     // types of geometries. {geoJSONData} and {origData.geometry}
     // can therefore be empty.
-    // Still, the feature is a geo:Feature and should be output as such
-    yield this.DF.quad(feature, RDFNS("type"), GEO("Feature"), graph);
-    if (geometry === undefined || data.geometryError)
+    if (data.geometry === undefined || data.geometryError)
       return CountWarn(
         `Table "${options.tableName}": "${data.geometryError}"; skipped`,
       );
@@ -135,7 +134,7 @@ export class FacadeXWithGeoSparql implements QuadsGen {
     for (const modelName of options.geoSPARQLModels) {
       const geomCls = ModuleRegistry.get(Registry.Geometry, modelName);
       yield* geomCls.getQuads(
-        geometry,
+        data,
         feature,
         geomCls.requiresSeparateGeomSubject?.(options)
           ? this.DF.blankNode()

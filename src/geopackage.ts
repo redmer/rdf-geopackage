@@ -4,7 +4,10 @@ import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
 import type { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
 import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
+import { BoundingBoxGeometry } from "./models/geosparql/bbox.js";
+import { CentroidGeometry } from "./models/geosparql/centroid.js";
 import { GeoJSONSerializer } from "./models/geosparql/geojson.js";
+import { FeatureMetrics } from "./models/geosparql/metrics.js";
 import { WktSerialization } from "./models/geosparql/wkt.js";
 import {
   ModuleRegistry,
@@ -15,7 +18,13 @@ import {
 // Register known quad generating modules here.
 // I don't know how to make this a true plugin (but that's not really necessary either)
 // The order of models is important: the first model is the default.
-for (const model of [new WktSerialization(), new GeoJSONSerializer()])
+for (const model of [
+  new WktSerialization(),
+  new GeoJSONSerializer(),
+  new BoundingBoxGeometry(),
+  new CentroidGeometry(),
+  new FeatureMetrics(),
+])
   ModuleRegistry.add(Registry.Geometry, model.id, model);
 
 for (const model of [new FacadeXWithGeoSparql()])
