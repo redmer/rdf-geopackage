@@ -21,13 +21,16 @@ Options:
   -o, --output                 Output quads file                        [string]
       --format                 Override output format (default: nquads)
             [choices: "nq", "nquads", "trig", "nt", "ntriples", "ttl", "turtle"]
-      --bounding-box           Limit features to bounding box           [string]
-      --bounding-box-crs       Coordinate Reference System code         [string]
+      --bbox                   Limit features to bounding box           [string]
+      --bbox-crs               Coordinate Reference System code         [string]
       --only-layers            Only output named feature layers and attribute ta
                                bles                                      [array]
       --include-binary-values  Output binary values                    [boolean]
       --base-iri               Base IRI                                 [string]
       --model                  Data meta model             [choices: "facade-x"]
+      --geosparql              Output GeoSPARQL
+  [array] [choices: "wkt", "geojson", "bbox", "centroid", "length-area"] [defaul
+                                                                     t: ["wkt"]]
 ```
 
 ## Options
@@ -40,8 +43,8 @@ Basic input and output serializations can be set with the following options:
 
 Work with large GeoPackages by limiting the output features, output tables and binary values:
 
-- `--bounding-box` limits the the output features to those in this area (default CRS: WGS84)
-- `--bounding-box-crs` indicates the CRS for the aforementioned bounding box. Supply a EPSG code (web lookup with EPSG.io) or a projection WKT.
+- `--bbox` limits the the output features to those in this area (default CRS: WGS84)
+- `--bbox-crs` indicates the CRS for the aforementioned bounding box. Supply a EPSG code (web lookup with EPSG.io) or a projection WKT.
 - `--only-layers` limits which feature layers (or attribute tables!) are output.
 - `--include-binary-values` overrides the default of skipping binary values. These will be base64 encoded string values with a `^^xsd:base64Binary` data type. NULL values are never output.
 
@@ -50,14 +53,18 @@ Modify the model and types of the output triples or quads:
 - `--base-iri`: set the relative base for the output RDF data. By default, this value is derived from the present working directory.
 - `--model`: the GeoPackage tables are not natively RDF data, so a module is programmed to generating triples according to a data meta-model. Included modules:
   - **default**: [`facade-x`](#model-facade-x)
-- `--geosparql`: modify which GeoSPARQL geometries, serializations and properties are output. Only the WKT literal is a representation in native CRS, all other are calculated and/or projected. Included modules:
-  - **default**: `wkt`
-  - `wkt`: using `geo:asWKT` with a WKT string literal (`geo:wktLiteral`)
-  - `geojson`: using `geo:asGeoJSON` with a WGS84 GeoJSON string literal (`geo:geoJSONLiteral`) of the `geometry` object
-  - `bbox`: output an envelope geometry of the feature (`geo:hasBoundingBox`) -- calculated using WGS84
-  - `centroid`: output a centroid point geometry of the featuer (`geo:hasCentroid`)
-  - `length-area`: output the length of the feature (`geo:hasMetricLength` in m) and the area of the feature (`geo:hasMetricArea` in m²)
-  - pass an empty array to only generate `[ rdf:type geo:Feature ]` quads and no geometries
+- `--geosparql`: modify which GeoSPARQL geometries, serializations and properties are output. Only the WKT literal is in layer native CRS, all other are calculated and/or projected.
+  Multiple values (space separated) are allowed.
+  Included feature predicates are listed in the table below.
+
+| Option              | GeoSPARQL feature predicates              | Note                                                            |
+| ------------------- | ----------------------------------------- | --------------------------------------------------------------- |
+| `wkt` (**default**) | `geo:hasGeometry/geo:asWKT`               | Output the feature's geometry as a WKT string literal           |
+| `geojson`           | `geo:hasGeometry/geo:asGeoJSON`           | Output the feature's geometry as a WGS84 GeoJSON string literal |
+| `bbox`              | `geo:hasBoundingBox`                      | Output a feature's bounding box                                 |
+| `centroid`          | `geo:hasCentroid`                         | Output a feature's centroid point                               |
+| `length-area`       | `geo:hasMetricLength` `geo:hasMetricArea` | Output the length (in m) and area (in m²) of the feature        |
+| _always on_         | `rdf:type geo:Feature`                    | Output the feature class                                        |
 
 ## RDF output
 
