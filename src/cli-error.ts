@@ -1,3 +1,5 @@
+import { stderr } from "node:process";
+import { format } from "node:util";
 import supportsColor from "supports-color";
 
 const COLORS = {
@@ -9,22 +11,26 @@ const COLORS = {
 /** Report an error to stderr and exit with error */
 export function Bye(message: string, ...optionalParams: any[]): never {
   if (supportsColor.stderr)
-    console.error(
-      `${COLORS.RED} Fatal error: ${COLORS.RESET} ${message}`,
-      ...optionalParams,
+    stderr.write(
+      format(
+        `${COLORS.RED} Fatal error: ${COLORS.RESET} ${message}\n`,
+        ...optionalParams,
+      ),
     );
-  else console.error(`# Fatal error: ${message}`, ...optionalParams);
+  else stderr.write(format(`# Fatal error: ${message}\n`, ...optionalParams));
   process.exit(500);
 }
 
 /** Report an non-fatal issue */
 export function Warn(message: string, ...optionalParams: any[]): void {
   if (supportsColor.stderr)
-    console.warn(
-      `${COLORS.YELLOW} Warning: ${COLORS.RESET} ${message}`,
-      ...optionalParams,
+    stderr.write(
+      format(
+        `${COLORS.YELLOW} Warning: ${COLORS.RESET} ${message}\n`,
+        ...optionalParams,
+      ),
     );
-  else console.warn(`# Warning: ${message}`, ...optionalParams);
+  else stderr.write(format(`# Warning: ${message}\n`, ...optionalParams));
 }
 
 let WARNINGS: Record<string, number> = {};
