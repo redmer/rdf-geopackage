@@ -25,7 +25,7 @@ import {
   type MimetypeValues,
 } from "./mimetypes.js";
 import { ModuleRegistry, Registry } from "./models/models-registry.js";
-import { FX, GEO, RDFNS, XSD, XYZ } from "./prefixes.js";
+import { FX, GEO, RDFNS, SF, XSD, XYZ } from "./prefixes.js";
 import { MergeGraphsStream } from "./rdf-stream-override.js";
 
 const pipeline = promisify(streampipeline);
@@ -89,7 +89,7 @@ async function cli() {
   // Get the input filepath or buffer and determine the best baseIRI
   const input = argv.input != "-" ? argv.input : await buffer(process.stdin);
   const baseIRI =
-    argv.baseIri ?? pathToFileURL(argv.input ?? process.env.PWD + "/").href;
+    argv.baseIri ?? pathToFileURL(argv.input ?? process.env.PWD).href + "#";
 
   // If there's a bounding box CRS defined, first check if we can parse it.
   // This is less expensive than converting quads etc.
@@ -137,6 +137,7 @@ async function cli() {
       fx: FX(""),
       geo: GEO(""),
       rdf: RDFNS(""),
+      sf: SF(""),
       xsd: XSD(""),
       xyz: XYZ(""),
     },

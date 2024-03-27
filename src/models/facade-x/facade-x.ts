@@ -78,8 +78,8 @@ export class FacadeXWithGeoSparql implements QuadsGen {
   /** A Facade-X node for the table is based off its baseIRI or else `xyz:` */
   getNodeForTable(tableName: string, base?: string): RDF.NamedNode {
     const baseURL = base ?? XYZ("").value;
-    const tableURL = new URL(encodeURIComponent(tableName), baseURL);
-    return this.DF.namedNode(tableURL.href);
+    const tableURL = baseURL + encodeURIComponent(tableName);
+    return this.DF.namedNode(tableURL);
   }
 
   /** Generate quads that represent the table */
