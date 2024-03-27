@@ -29,7 +29,7 @@ export class BoundingBoxGeometry implements GeomQuadsGen {
 
     yield quad(feature, GEO("hasBoundingBox"), geom, graph);
     yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
-    yield quad(geom, RDFNS("type"), SF("Polygon"), graph);
+    yield quad(geom, RDFNS("type"), SF("Envelope"), graph);
 
     const bboxElements = bbox(data.geometry.toGeoJSON());
     const bboxData = bboxPolygon(bboxElements);
