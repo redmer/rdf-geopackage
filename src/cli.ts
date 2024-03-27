@@ -60,7 +60,7 @@ async function cli() {
     })
     .option("include-binary-values", {
       type: "boolean",
-      desc: "Output binary values",
+      desc: "Output binary values (xsd:base64Binary)",
     })
     .option("base-iri", { type: "string", desc: "Base IRI" })
     .option("model", {
@@ -68,12 +68,11 @@ async function cli() {
     })
     .choices("model", ModuleRegistry.knownModels(Registry.Generic))
     .option("geosparql", {
-      desc: "Output GeoSPARQL",
+      desc: "Output GeoSPARQL (default: wkt)",
       type: "string",
       array: true,
     })
     .choices("geosparql", ModuleRegistry.knownModels(Registry.Geometry))
-    .default("geosparql", ["wkt"])
     .strict();
   const argv = await options.parse();
 
@@ -117,8 +116,9 @@ async function cli() {
     argv.output?.endsWith(".gz") ?? argv.format?.endsWith(".gz") ?? false;
   const model: string =
     argv.model ?? ModuleRegistry.knownModels(Registry.Generic)[0];
-  const geoSPARQLModels: string[] =
-    argv.geosparql ?? ModuleRegistry.knownModels(Registry.Geometry);
+  const geoSPARQLModels: string[] = Array.isArray(argv.geosparql)
+    ? argv.geosparql
+    : ["wkt"];
   const DF = new DataFactory();
 
   const parser = new GeoPackageParser(input, {
