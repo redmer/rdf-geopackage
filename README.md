@@ -2,7 +2,10 @@
 
 [![Get latest version](https://img.shields.io/npm/v/%40rdmr-eu/rdf-geopackage)](https://www.npmjs.com/package/@rdmr-eu/rdf-geopackage)
 
-Generate RDF out of a GeoPackage (for further processing)
+Generate RDF out of a GeoPackage file.
+Outputs a Facade-X-like model, supports different CRSs (map projections), limited layers, and many GeoSPARQL features, like GeoJSON, bounding boxes, centroids, WKTs.
+
+[Example RDF dataset](https://triplydb.com/RedmerKronemeijer/rdf-geopackage) and [query results on a map](https://triplydb.com/RedmerKronemeijer/-/queries/rdf-geopackage-PDOK-provinces/1).
 
 ## Usage
 
