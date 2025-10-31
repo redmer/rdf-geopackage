@@ -50,10 +50,10 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
 
     this.filepathOrBuffer = filepathOrBuffer;
     this.options = {
+      includeBinaryValues: false,
+      baseIRI: "http://example.com/feature/id#",
       ...options,
       factory: options.factory ?? new DataFactory(),
-      baseIRI: "http://example.com/feature/id#",
-      includeBinaryValues: false,
     };
     this.generator = ModuleRegistry.get(Registry.Generic, this.options.model);
     this.shouldRead = false;
