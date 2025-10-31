@@ -2,23 +2,14 @@ import { GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
-import type {
-  CLIContext,
-  PartialBy,
-  RDFContext,
-  RDFOptions,
-} from "./interfaces.js";
+import type { CLIContext, PartialBy, RDFContext, RDFOptions } from "./interfaces.js";
 import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
 import { BoundingBoxGeometry } from "./models/geosparql/bbox.js";
 import { CentroidGeometry } from "./models/geosparql/centroid.js";
 import { GeoJSONSerializer } from "./models/geosparql/geojson.js";
 import { FeatureMetrics } from "./models/geosparql/metrics.js";
 import { WktSerialization } from "./models/geosparql/wkt.js";
-import {
-  ModuleRegistry,
-  Registry,
-  type QuadsGen,
-} from "./models/models-registry.js";
+import { ModuleRegistry, Registry, type QuadsGen } from "./models/models-registry.js";
 
 // Register known quad generating modules here.
 // I don't know how to make this a true plugin (but that's not really necessary either)

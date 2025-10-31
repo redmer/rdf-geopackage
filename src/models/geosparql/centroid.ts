@@ -1,6 +1,6 @@
 import type { GeometryData } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import centroid from "@turf/centroid";
+import { default as centroid } from "@turf/centroid";
 import * as wkx from "wkx";
 import type { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS, SF } from "../../prefixes.js";
@@ -31,17 +31,13 @@ export class CentroidGeometry implements GeomQuadsGen {
     yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
     yield quad(geom, RDFNS("type"), SF("Point"), graph);
 
+    //@ts-ignore
     const value = centroid(data.geometry.toGeoJSON() as any);
     const geometry = wkx.Geometry.parseGeoJSON(value["geometry"]);
 
     const { srs } = ctx;
     const wktLiteral = `<${srsOpengisUrl(srs)}> ${geometry.toWkt()}`;
 
-    yield quad(
-      geom,
-      GEO("asWKT"),
-      literal(wktLiteral, GEO("wktLiteral")),
-      graph,
-    );
+    yield quad(geom, GEO("asWKT"), literal(wktLiteral, GEO("wktLiteral")), graph);
   }
 }

@@ -31,18 +31,15 @@ export class BoundingBoxGeometry implements GeomQuadsGen {
     yield quad(geom, RDFNS("type"), GEO("Geometry"), graph);
     yield quad(geom, RDFNS("type"), SF("Envelope"), graph);
 
+    //@ts-ignore
     const bboxElements = bbox(data.geometry.toGeoJSON());
+    //@ts-ignore
     const bboxData = bboxPolygon(bboxElements);
     const geometry = wkx.Geometry.parseGeoJSON(bboxData["geometry"]);
 
     const { srs } = ctx;
     const wktLiteral = `<${srsOpengisUrl(srs)}> ${geometry.toWkt()}`;
 
-    yield quad(
-      geom,
-      GEO("asWKT"),
-      literal(wktLiteral, GEO("wktLiteral")),
-      graph,
-    );
+    yield quad(geom, GEO("asWKT"), literal(wktLiteral, GEO("wktLiteral")), graph);
   }
 }
