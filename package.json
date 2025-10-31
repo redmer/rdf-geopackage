@@ -112,7 +112,7 @@
       ".ts"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>/tests/setup.js"
+      "<rootDir>/test/setup.js"
     ]
   }
 }
