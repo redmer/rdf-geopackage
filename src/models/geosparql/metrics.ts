@@ -78,6 +78,7 @@ export class FeatureMetrics implements GeomQuadsGen {
     if (this.geometryTypeSupportsLength(reprojData.type)) {
       //@ts-ignore
       const l = length(reprojData, { units: "kilometers" });
+      value = parseFloat((l * 1000).toFixed(3)).toString();
 
       yield quad(feature, GEO("hasMetricLength"), literal(value, XSD("double")), graph);
     }
