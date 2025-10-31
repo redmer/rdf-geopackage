@@ -2,7 +2,12 @@ import { GeoPackage, GeoPackageAPI } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 import { Readable } from "node:stream";
 import { DataFactory } from "rdf-data-factory";
-import type { CLIContext, RDFContext, RDFOptions } from "./interfaces.js";
+import type {
+  CLIContext,
+  PartialBy,
+  RDFContext,
+  RDFOptions,
+} from "./interfaces.js";
 import { FacadeXWithGeoSparql } from "./models/facade-x/facade-x.js";
 import { BoundingBoxGeometry } from "./models/geosparql/bbox.js";
 import { CentroidGeometry } from "./models/geosparql/centroid.js";
@@ -46,7 +51,9 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
    */
   constructor(
     filepathOrBuffer: string | Buffer | Uint8Array,
-    options: CLIContext & RDFContext & RDFOptions,
+    options: CLIContext &
+      Partial<RDFContext> &
+      PartialBy<RDFOptions, "includeBinaryValues">,
   ) {
     super({ objectMode: true });
 
@@ -54,6 +61,8 @@ export class GeoPackageParser extends Readable implements RDF.Stream {
     this.options = {
       ...options,
       factory: options.factory ?? new DataFactory(),
+      baseIRI: "http://example.com/feature/id#",
+      includeBinaryValues: false,
     };
     this.generator = ModuleRegistry.get(Registry.Generic, this.options.model);
     this.shouldRead = false;

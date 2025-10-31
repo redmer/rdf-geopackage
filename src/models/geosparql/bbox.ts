@@ -1,7 +1,7 @@
 import type { GeometryData } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import bbox from "@turf/bbox";
-import bboxPolygon from "@turf/bbox-polygon";
+import { default as bbox } from "@turf/bbox";
+import { default as bboxPolygon } from "@turf/bbox-polygon";
 import * as wkx from "wkx";
 import type { FeatureTableContext } from "../../interfaces.js";
 import { GEO, RDFNS, SF } from "../../prefixes.js";

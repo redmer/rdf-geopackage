@@ -4,6 +4,8 @@ import type {
 } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
 
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 /** Info on a table */
 export interface TableContext {
   /** Name of the originating table */
