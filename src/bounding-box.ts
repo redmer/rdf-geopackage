@@ -10,7 +10,10 @@ async function fetchEPSGProjectionWKT(epsgCode: string): Promise<string> {
     const [_, code] = epsgCode.split(":", 2);
     const request = await fetch(`https://epsg.io/${code}.wkt`, {});
     if (request.ok) return request.text();
-    Bye(`Code '${epsgCode}' could not be fetched. Supply a projection WKT.`, request.statusText);
+    Bye(
+      `Code '${epsgCode}' could not be fetched. Supply a projection WKT.`,
+      request.statusText,
+    );
   } catch (e) {
     Bye(`Code '${epsgCode}' could not be fetched. Supply a projection WKT.`, e.message);
   }
@@ -26,7 +29,8 @@ export async function getWGS84Converter(crsProj: string): Promise<proj4.Converte
       return getWGS84Converter(await fetchEPSGProjectionWKT(crsProj));
 
     // It's not an EPSG code, but a code nonetheless. Tip: use a WKT
-    if (crsProj.includes(`:`)) Bye(`Code '${crsProj}' unknown. Supply a projection WKT.`);
+    if (crsProj.includes(`:`))
+      Bye(`Code '${crsProj}' unknown. Supply a projection WKT.`);
 
     // It's not even a projection code. Possibly a projection WKT?
     Bye(`Projection WKT '${crsProj}' could not be parsed`);
@@ -50,12 +54,16 @@ export function parseForWSEN(bbox: string): number[] {
   return (parse() ?? []).map((v) => Number(v));
 }
 
-export function getRawBoundingBox(bbox: string) {
+export function getRawBoundingBox(bbox: string): BoundingBox {
   const [west, south, east, north] = parseForWSEN(bbox);
   return new BoundingBox(west, east, south, north);
 }
 
-export function suppliedBoundingBox(bbstring: string, inCRS: proj4.Converter | string) {
+/** Convert a bbox string to a BBox object in a certain CRS. */
+export function suppliedBoundingBox(
+  bbstring: string,
+  inCRS: proj4.Converter | string,
+): BoundingBox {
   try {
     return getRawBoundingBox(bbstring).projectBoundingBox(inCRS, WGS84_CODE);
   } catch (e) {

@@ -1,7 +1,7 @@
 import type { GeometryData } from "@ngageoint/geopackage";
 import type * as RDF from "@rdfjs/types";
-import area from "@turf/area";
-import length from "@turf/length";
+import { default as area } from "@turf/area";
+import { default as length } from "@turf/length";
 import type { Geometry } from "geojson";
 import type { FeatureTableContext } from "../../interfaces.js";
 import { GEO, XSD } from "../../prefixes.js";
@@ -71,34 +71,23 @@ export class FeatureMetrics implements GeomQuadsGen {
     factory: RDF.DataFactory,
   ) {
     const { literal, quad } = factory;
-    const reprojData = new GeoJSONSerializer().epsg4326GeoJSON(
-      data,
-      ctx,
-    ) as Geometry;
+    const reprojData = new GeoJSONSerializer().epsg4326GeoJSON(data, ctx) as Geometry;
 
     let value: string;
 
     if (this.geometryTypeSupportsLength(reprojData.type)) {
-      // default UoM: km
-      value = parseFloat((length(reprojData) * 100).toFixed(3)).toString();
+      //@ts-ignore
+      const l = length(reprojData, { units: "kilometers" });
 
-      yield quad(
-        feature,
-        GEO("hasMetricLength"),
-        literal(value, XSD("double")),
-        graph,
-      );
+      yield quad(feature, GEO("hasMetricLength"), literal(value, XSD("double")), graph);
     }
 
     if (this.geometryTypeSupportsArea(reprojData.type)) {
-      value = parseFloat(area(reprojData).toFixed(3)).toString();
+      //@ts-ignore
+      const a = area(reprojData);
+      value = parseFloat(a.toFixed(3)).toString();
 
-      yield quad(
-        feature,
-        GEO("hasMetricArea"),
-        literal(value, XSD("double")),
-        graph,
-      );
+      yield quad(feature, GEO("hasMetricArea"), literal(value, XSD("double")), graph);
     }
   }
 }

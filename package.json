@@ -29,7 +29,9 @@
   ],
   "author": "Redmer Kronemeijer <12477216+redmer@users.noreply.github.com> (https://rdmr.eu/)",
   "license": "MPL-2.0",
-  "prettier": {},
+  "prettier": {
+    "printWidth": 88
+  },
   "eslintConfig": {
     "env": {
       "node": true
